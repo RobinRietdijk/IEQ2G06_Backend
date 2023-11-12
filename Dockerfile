@@ -10,8 +10,9 @@ COPY app/package*.json ./
 # Install application dependencies
 RUN npm install
 
-# Set the GPTAPIKEY secret as an environment variable
-ENV gptAPIKey=${GPTAPIKEY}
+# Set the GPTAPIKEY secret as an environment variable during build
+ARG GPTAPIKEY
+ENV gptAPIKey=$GPTAPIKEY
 
 # Copy the rest of your application files
 COPY app/ ./
