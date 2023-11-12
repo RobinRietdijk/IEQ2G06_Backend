@@ -3,7 +3,6 @@ import stream from 'stream';
 
 export default class ChatGPT {
     constructor(socket) {
-        console.log("hey");
         this.connected = false;
         this.socket = socket;
         this.init();
@@ -11,6 +10,7 @@ export default class ChatGPT {
 
     async init() {
         console.log(process.env.gptAPIKey);
+        console.log(process.env.GPTAPIKEY);
         if (process.env.gptAPIKey) {
                 this.api = new ChatGPTAPI({
                 apiKey: process.env.gptAPIKey
