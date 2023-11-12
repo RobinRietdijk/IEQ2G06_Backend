@@ -39,4 +39,4 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ${{ env.REPO_LOWER }}:${{ env.COMMIT_HASH }},${{ env.REPO_LOWER }}:latest
+        tags: ghcr.io/${{ env.REPO_LOWER }}:${{ env.COMMIT_HASH }},ghcr.io/${{ env.REPO_LOWER }}:latest
