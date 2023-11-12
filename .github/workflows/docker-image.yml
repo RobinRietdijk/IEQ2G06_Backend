@@ -11,7 +11,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     env:
-      COMMIT_HASH: ${{ github.sha }}
+      COMMIT_HASH: $(git rev-parse --short HEAD)
       REPO: ${{ github.repository }}
 
     steps:
@@ -43,4 +43,4 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ghcr.io/${{ env.REPO_LOWER }}/ieq2_backend:${{ env.COMMIT_HASH }},ghcr.io/${{ env.REPO_LOWER }}/ieq2_backend:latest
+        tags: ghcr.io/${{ env.REPO_LOWER }}/ieg06_backend:${{ env.COMMIT_HASH }},ghcr.io/${{ env.REPO_LOWER }}/ieg06_backend:latest
