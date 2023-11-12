@@ -3,12 +3,14 @@ import stream from 'stream';
 
 export default class ChatGPT {
     constructor(socket) {
+        console.log("hey");
         this.connected = false;
         this.socket = socket;
         this.init();
     }
 
     async init() {
+        console.log(process.env.gptAPIKey);
         if (process.env.gptAPIKey) {
                 this.api = new ChatGPTAPI({
                 apiKey: process.env.gptAPIKey
