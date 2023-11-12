@@ -9,10 +9,14 @@ export default class ChatGPT {
     }
 
     async init() {
-        this.api = new ChatGPTAPI({
-            apiKey: process.env.apiKey || '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'
-        });
-        this.connected = true;
+        if (process.env.gptAPIKey) {
+                this.api = new ChatGPTAPI({
+                apiKey: process.env.gptAPIKey
+            });
+            this.connected = true;
+        } else {
+            this.connected = false;
+        }
     }
 
     async sendMessage(msg) {

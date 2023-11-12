@@ -8,8 +8,8 @@ const io = new Server(httpServer, {});
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
-app.use(routes.home);
-app.use('/gpt', routes.gpt);
+app.use(routes.home());
+app.use('/gpt', routes.gpt(io));
 
 io.on('connection', (socket) => {
     console.debug("Socket connected!");

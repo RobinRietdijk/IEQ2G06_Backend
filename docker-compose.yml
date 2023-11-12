@@ -1,0 +1,15 @@
+version: '3'
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: node:latest  # Use an appropriate Node.js version
+    container_name: ieq2_backend
+    working_dir: /app
+    ports:
+      - "3001:3001"  # Change the port if your app uses a different one
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    command: npm start
