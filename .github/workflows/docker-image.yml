@@ -22,5 +22,6 @@ jobs:
     - name: Build Docker Image and Push
       run: |
         repo_name_lowercase=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-        docker build -t docker.pkg.github.com/$repo_name_lowercase/ieg06_backend:$(date +%s) -f Dockerfile .
-        docker push docker.pkg.github.com/$repo_name_lowercase/ieg06_backend:$(date +%s)
+        image_name_lowercase="ieg06_backend:${commit_hash}"
+        docker build -t docker.pkg.github.com/$repo_name_lowercase/$image_name_lowercase -f Dockerfile .
+        docker push docker.pkg.github.com/$repo_name_lowercase/$image_name_lowercase
