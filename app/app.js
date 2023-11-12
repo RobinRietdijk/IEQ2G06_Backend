@@ -19,4 +19,5 @@ io.on('connection', (socket) => {
 app.set('socket', io);
 httpServer.listen(PORT, () => {
     console.debug(`Listening on port: ${PORT}`)
+    console.log(process.env);
 });

@@ -9,10 +9,6 @@ export default class ChatGPT {
     }
 
     async init() {
-        console.log(typeof(process.env.gptAPIKey));
-        console.log(process.env.gptAPIKey);
-        console.log(typeof(process.env.GPTAPIKEY));
-        console.log(process.env.GPTAPIKEY);
         if (process.env.gptAPIKey) {
                 this.api = new ChatGPTAPI({
                 apiKey: process.env.gptAPIKey
