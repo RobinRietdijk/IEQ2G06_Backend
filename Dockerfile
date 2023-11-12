@@ -14,6 +14,8 @@ RUN npm install
 ARG GPTAPIKEY
 ENV gptAPIKey=$GPTAPIKEY
 
+RUN echo "GPTAPIKEY=$GPTAPIKEY"
+
 # Copy the rest of your application files
 COPY app/ ./
 
