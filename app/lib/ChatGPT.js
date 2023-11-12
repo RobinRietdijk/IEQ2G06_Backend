@@ -9,18 +9,12 @@ export default class ChatGPT {
     }
 
     async init() {
-        if (process.env.gptAPIKey) {
-                this.api = new ChatGPTAPI({
-                apiKey: process.env.GPTAPIKEY
-            });
-            this.connected = true;
-        } else {
-            this.connected = false;
-        }
+        this.api = new ChatGPTAPI({
+            apiKey: process.env.GPTAPIKEY
+        });
     }
 
     async sendMessage(msg) {
-        if (!this.connected) throw new Error('ChatGPT not connected!');
         const res = await this.api.sendMessage(msg, {
             onProgress: (pRes) => pRes.delta ? this.socket.emit('data', pRes.delta) : null
         });
