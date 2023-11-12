@@ -9,11 +9,19 @@ export default (socket) => {
     });
 
     router.get('/', async (req, res) => {
-        res.send(await api.sendMessage("Hello GPT"));
+        try {
+            res.send(await api.sendMessage("Hello GPT"));
+        } catch (error) {
+            console.error(error.message);
+        }
     });
 
     router.post('/', async (req, res) => {
-        res.send(await api.sendMessage(req.body.message));
+        try {
+            res.send(await api.sendMessage(req.body.message));
+        } catch (error) {
+            console.error(error.message);
+        }
     });
     
     return router;
