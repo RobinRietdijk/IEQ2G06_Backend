@@ -13,7 +13,7 @@ jobs:
     env:
       COMMIT_HASH: ${{ github.sha }}
       REPO_OWNER: ${{ github.repository_owner }}
-      REPO_NAME: ${{ github.repository_name }}
+      REPO_NAME: ${{ github.repository }}
 
     steps:
     - name: Build the Docker image
