@@ -11,7 +11,7 @@ export default class ChatGPT {
     async init() {
         if (process.env.gptAPIKey) {
                 this.api = new ChatGPTAPI({
-                apiKey: process.env.gptAPIKey
+                apiKey: process.env.GPTAPIKEY
             });
             this.connected = true;
         } else {
