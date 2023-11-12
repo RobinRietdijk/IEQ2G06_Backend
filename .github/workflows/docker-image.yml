@@ -43,5 +43,5 @@ jobs:
         platforms: linux/amd64,linux/arm64,linux/arm
         push: true
         tags: ghcr.io/${{ env.REPO_LOWER }}:${{ env.COMMIT_HASH }},ghcr.io/${{ env.REPO_LOWER }}:latest
-        secrets: |
-          "GPTAPIKEY: ${{ secrets.GPT_KEY }}"
+      env: 
+        GPTAPIKEY: ${{ secrets.CR_PAT }}
