@@ -8,9 +8,12 @@ on:
 
 jobs:
 
-  build:
-
+  build-and-push:
     runs-on: ubuntu-latest
+    env:
+      COMMIT_HASH: ${{ github.sha }}
+      REPO_OWNER: ${{ github.repository_owner }}
+      REPO_NAME: ${{ github.repository_name }}
 
     steps:
     - name: Build the Docker image
@@ -22,17 +25,18 @@ jobs:
     - name: Login to GitHub Container Registry, Build and Push image
       run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u ${{ github.repository_owner }} --password-stdin
   
-    - name: Set repository name to lowercase
-      id: set-repo-name
+    - name: Set repository owner to lowercase
       run: |
-        repo_name_lowercase=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
-        echo "::set-output name=repo_name_lowercase::$repo_name_lowercase"
+        repo_owner_lowercase=$(echo "${REPO_OWNER}" | tr '[:upper:]' '[:lower:]')
+        echo "REPO_OWNER_LOWER=${repo_owner_lowercase}" >> $GITHUB_ENV
 
-    - name: Get commit hash
-      id: get-commit-hash
+    - name: Set repository name to lowercase
       run: |
-        commit_hash=$(git rev-parse --short HEAD)
-        echo "::set-output name=commit_hash::$commit_hash"
+        repo_name_lowercase=$(echo "${REPO_NAME}" | tr '[:upper:]' '[:lower:]')
+        echo "REPO_NAME_LOWER=${repo_name_lowercase}" >> $GITHUB_ENV
+
+    - name: Set commit hash in environment file
+      run: echo "COMMIT_HASH=${COMMIT_HASH}" >> $GITHUB_ENV
 
     - name: Build and push multi-architecture image
       uses: docker/build-push-action@v2
@@ -41,4 +45,4 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ghcr.io/${{ github.repository_owner }}/${{ steps.set-repo-name.outputs.repo_name_lowercase }}:${{ steps.get-commit-hash.outputs.commit_hash }}, ghcr.io/${{ github.repository_owner }}/${{ steps.set-repo-name.outputs.repo_name_lowercase }}:latest
+        tags: ghcr.io/${{ env.REPO_OWNER_LOWER }}/${{ env.REPO_NAME_LOWER }}:${COMMIT_HASH},ghcr.io/${{ env.REPO_OWNER_LOWER }}/${{ env.REPO_NAME_LOWER }}:latest
