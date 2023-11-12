@@ -12,7 +12,7 @@ RUN npm install
 
 # Set the GPTAPIKEY secret as an environment variable during build
 ARG GPTAPIKEY
-ENV gptAPIKey=$GPTAPIKEY
+ENV GPTAPIKEY=$GPTAPIKEY
 
 RUN echo "GPTAPIKEY=$GPTAPIKEY"
 
