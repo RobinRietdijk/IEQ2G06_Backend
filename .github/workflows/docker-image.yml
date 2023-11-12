@@ -12,8 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       COMMIT_HASH: ${{ github.sha }}
-      REPO_OWNER: ${{ github.repository_owner }}
-      REPO_NAME: ${{ github.repository }}
+      REPO: ${{ github.repository }}
 
     steps:
     - name: Build the Docker image
@@ -25,32 +24,13 @@ jobs:
     - name: Login to GitHub Container Registry, Build and Push image
       run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u ${{ github.repository_owner }} --password-stdin
   
-    - name: Set repository owner to lowercase
+    - name: Set repository to lowercase
       run: |
-        repo_owner_lowercase=$(echo "${REPO_OWNER}" | tr '[:upper:]' '[:lower:]')
-        echo "REPO_OWNER_LOWER=${repo_owner_lowercase}" >> $GITHUB_ENV
-
-    - name: Set repository name to lowercase
-      run: |
-        repo_name_lowercase=$(echo "${REPO_NAME}" | tr '[:upper:]' '[:lower:]')
-        echo "REPO_NAME_LOWER=${repo_name_lowercase}" >> $GITHUB_ENV
+        repo_lowercase=$(echo "${REPO}" | tr '[:upper:]' '[:lower:]')
+        echo "REPO_LOWER=${repo_lowercase}" >> $GITHUB_ENV
 
     - name: Set commit hash in environment file
       run: echo "COMMIT_HASH=${COMMIT_HASH}" >> $GITHUB_ENV
-
-    - name: Debug - Print Environment Variables
-      run: |
-        echo "COMMIT_HASH: $COMMIT_HASH"
-        echo "REPO_OWNER: $REPO_OWNER"
-        echo "REPO_NAME: $REPO_NAME"
-        echo "REPO_OWNER_LOWER: $REPO_OWNER_LOWER"
-        echo "REPO_NAME_LOWER: $REPO_NAME_LOWER"
-      env:
-        COMMIT_HASH: ${{ github.sha }}
-        REPO_OWNER: ${{ github.repository_owner }}
-        REPO_NAME: ${{ github.repository_name }}
-        REPO_OWNER_LOWER: ${{ env.REPO_OWNER_LOWER }}
-        REPO_NAME_LOWER: ${{ env.REPO_NAME_LOWER }}
 
     - name: Build and push multi-architecture image
       uses: docker/build-push-action@v2
@@ -59,4 +39,4 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ghcr.io/${{ env.REPO_OWNER_LOWER }}/${{ env.REPO_NAME_LOWER }}:${{ env.COMMIT_HASH }},ghcr.io/${{ env.REPO_OWNER_LOWER }}/${{ env.REPO_NAME_LOWER }}:latest
+        tags: ghcr.io/${{ env.REPO_LOWER }}:${{ env.COMMIT_HASH }},ghcr.io/${{ env.REPO_LOWER }}:latest
