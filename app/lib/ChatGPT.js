@@ -16,7 +16,8 @@ export default class ChatGPT {
 
     async sendMessage(msg) {
         const res = await this.api.sendMessage(msg, {
-            onProgress: (pRes) => pRes.delta ? this.socket.emit('progress', pRes) : null
+            onProgress: (pRes) => pRes.delta ? this.socket.emit('progress', pRes) : null,
+            timeoutMs: 1 * 60 * 1000
         });
         return res.text;
     }
