@@ -15,9 +15,11 @@ export default class ChatGPT {
     }
 
     async sendMessage(msg) {
+        this.socket.emit('start_generation', {});
         const res = await this.api.sendMessage(msg, {
-            onProgress: (pRes) => pRes.delta ? this.socket.emit('data', pRes.delta) : null
+            onProgress: (pRes) => pRes.delta ? this.socket.emit('progress', pRes.delta) : null
         });
+        this.socket.emit('end_generation', {});
         return res.text;
     }
 }
