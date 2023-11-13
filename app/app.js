@@ -17,6 +17,9 @@ app.use('/gpt', routes.gpt(io));
 
 io.on('connection', (socket) => {
     console.debug("Socket connected!");
+    socket.on('disconnect', (reason) => {
+        console.debug(`Socket disconnected, reason: ${reason}`);
+    })
 });
 app.set('socket', io);
 
