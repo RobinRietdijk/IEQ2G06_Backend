@@ -14,11 +14,12 @@ export default class ChatGPT {
         });
     }
 
-    async sendMessage(msg) {
+    async sendMessage(id, msg) {
         const res = await this.api.sendMessage(msg, {
-            onProgress: (pRes) => pRes.delta ? this.socket.emit('progress', pRes) : null,
+            onProgress: (pRes) => pRes.delta ? this.socket.emit('progress', {pRes: pRes, id: id}) : null,
             timeoutMs: 1 * 60 * 1000
         });
-        return res.text;
+        res.id = id;
+        return res;
     }
 }

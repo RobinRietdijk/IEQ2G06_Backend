@@ -10,7 +10,7 @@ export default (socket) => {
 
     router.get('/', async (req, res) => {
         try {
-            res.send(await api.sendMessage("Hello GPT"));
+            res.send({ "status": "OK" });
         } catch (error) {
             console.error(error.message);
         }
@@ -18,7 +18,7 @@ export default (socket) => {
 
     router.post('/', async (req, res) => {
         try {
-            res.send(await api.sendMessage(req.body.message));
+            res.send(await api.sendMessage(req.body.id, req.body.message));
         } catch (error) {
             console.error(error.message);
         }
