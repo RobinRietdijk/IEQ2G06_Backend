@@ -17,10 +17,9 @@ app.use('/gpt', routes.gpt(io));
 
 io.on('connection', (socket) => {
     console.debug("Socket connected!");
-    socket.emit('connect', {message: 'a new client connected'})
 });
-
 app.set('socket', io);
+
 httpServer.listen(PORT, () => {
     console.debug(`Listening on port: ${PORT}`)
 });
