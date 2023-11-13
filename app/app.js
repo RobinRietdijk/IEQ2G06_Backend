@@ -4,7 +4,11 @@ import { Server } from 'socket.io';
 import routes from './routes/index.js';
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {});
+const io = new Server(httpServer, {
+    cors: {
+        origin: '*',
+    }
+});
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
