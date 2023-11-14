@@ -1,7 +1,7 @@
 version: '3'
 services:
   ieq2g06_backend:
-    image: ghcr.io/robinrietdijk/ieq2_backend/ieg06_backend:latest
+    image: ghcr.io/robinrietdijk/ieq2g06_backend::latest
     container_name: ieq2g06_backend
     environment:
       - NODE_ENV=production
