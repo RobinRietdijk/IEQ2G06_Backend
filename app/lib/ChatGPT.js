@@ -15,11 +15,13 @@ export default class ChatGPT {
     }
 
     async sendMessage(id, msg) {
+        this.socket.emit('gptquestion', {id: id, msg: msg});
         const res = await this.api.sendMessage(msg, {
-            onProgress: (pRes) => pRes.delta ? this.socket.emit('progress', {pRes: pRes, id: id}) : null,
+            onProgress: (pRes) => pRes.delta ? this.socket.emit('gptanswer_progress', {id: id, msg: pRes}) : null,
             timeoutMs: 1 * 60 * 1000
         });
         res.id = id;
+        this.socket.emit('gptanswer', {id: id, msg: msg});
         return res;
     }
 }

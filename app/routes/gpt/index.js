@@ -18,7 +18,8 @@ export default (socket) => {
 
     router.post('/', async (req, res) => {
         try {
-            res.send(await api.sendMessage(req.body.id, req.body.message));
+            const id = Date.now().toString(36) = Math.random().toString(36).substring(2);
+            res.send(await api.sendMessage(id, req.body.message));
         } catch (error) {
             console.error(error.message);
         }
