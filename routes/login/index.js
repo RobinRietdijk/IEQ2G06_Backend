@@ -1,5 +1,6 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const SECRET = process.env.JWT_KEY || 'jwtsecret'; 
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';

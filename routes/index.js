@@ -1,4 +1,5 @@
 import gpt from './gpt/index.js';
+import login from './login/index.js'
 import express from 'express';
 
 const home = () => {
@@ -16,4 +17,5 @@ const home = () => {
 export default {
     home,
     gpt,
+    login,
 }
