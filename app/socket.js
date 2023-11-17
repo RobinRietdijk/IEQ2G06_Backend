@@ -18,13 +18,6 @@ export default (httpServer) => {
     });
 
     io.on('connection', (socket) => {
-        const username = socket.handshake.auth.username
-        const password = socket.handshake.auth.password
-        
-        if (process.env.ADMIN_USER && process.env.ADMIN_PASSWD && username === process.env.ADMIN_USER && password === process.env.ADMIN_PASSWD) {
-            console.log("ADMIN CONNECTED")
-        }
-
         if (socket.recovered) {
             console.log(`Socket connection recovered`);
         } else {
