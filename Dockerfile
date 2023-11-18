@@ -5,7 +5,7 @@ FROM node:latest
 WORKDIR /src
 
 # Copy package.json and package-lock.json to the container
-COPY ./package*.json ./
+COPY package*.json ./
 
 # Install application dependencies
 RUN npm install
