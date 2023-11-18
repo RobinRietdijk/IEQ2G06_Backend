@@ -1,9 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import SocketManager from './lib/SocketManager.js';
+import SocketManager from './lib/socket/SocketManager.js';
 import routes from './routes/index.js';
-import logger from './util/logger.js'
+import { appLogger as logger } from './util/logger.js'
 import { createServer } from 'http';
+import { requestLogger, responseLogger } from './middleware/morgan.js';
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -13,6 +14,8 @@ app.use(cors({
     origin: '*'
 }));
 app.use(express.json());
+app.use(requestLogger);
+app.use(responseLogger);
 
 app.use(routes.home());
 app.use('/gpt', routes.gpt(io.io));
