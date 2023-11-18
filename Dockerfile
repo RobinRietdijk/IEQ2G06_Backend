@@ -2,7 +2,7 @@
 FROM node:latest
 
 # Set the working directory inside the container
-WORKDIR .
+WORKDIR /src
 
 # Copy package.json and package-lock.json to the container
 COPY ./package*.json ./
@@ -17,7 +17,7 @@ ENV GPTAPIKEY=$GPTAPIKEY
 RUN echo "GPTAPIKEY=$GPTAPIKEY"
 
 # Copy the rest of your application files
-COPY . ./
+COPY src/ ./
 
 # Expose the port your application is running on (replace with your port)
 EXPOSE 3001
