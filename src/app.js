@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(requestLogger);
 app.use(responseLogger);
 
-app.use(router);
+app.use('', router);
 
 app.set('socket', io.io);
 httpServer.listen(PORT, () => {

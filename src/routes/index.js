@@ -8,7 +8,7 @@ import adminHandler from './admin/adminHandler.js';
 const router = express.Router();
 
 const indexHandler = (req, res) => {
-    res.status(200);
+    res.status(200).json({ status: 'OK' });
 }
 
 const errorHandler = (error, req, res, next) => {
