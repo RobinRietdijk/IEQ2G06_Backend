@@ -33,6 +33,7 @@ export default class Node {
     }
 
     connect(socket) {
+        if (this.connected) throw new Error(`Node: "${this.id} is already connected"`);
         this.socket = socket;
         this.connected = true;
         this.connectedSince = new Date();
@@ -40,12 +41,14 @@ export default class Node {
     }
 
     disconnect() {
+        if (!this.connected) throw new Error(`Node: "${this.id} is not connected"`);
         this.socket = undefined;
         this.connected = false;
         this.connectedSince = new Date();
     }
 
     forceDisconnect(message) {
+        if (!this.connected) throw new Error(`Node: "${this.id} is not connected"`);
         this.socket.emit(EVENTS.NODE_DISCONNECTED, { msg: message });
         this.disconnect();
     }
