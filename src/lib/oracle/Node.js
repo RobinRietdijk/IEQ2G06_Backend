@@ -1,4 +1,4 @@
-import { EVENTS } from "../../util/constants";
+import { EVENTS } from "../../util/constants.js";
 
 export default class Node {
     constructor(id, name, system_id, root=false) {
