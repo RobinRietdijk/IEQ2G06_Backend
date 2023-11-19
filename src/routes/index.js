@@ -1,21 +1,40 @@
-import gpt from './gpt/index.js';
-import login from './login/index.js'
 import express from 'express';
+import { ROUTES } from '../util/constants.js';
+import { adminMiddleware } from './middleware.js';
+import { appLogger as logger } from '../util/logger.js';
+import loginHandler from './login/loginHandler.js'
+import gptHandler from './gpt/gptHandler.js';
+import adminHandler from './admin/adminHandler.js';
+const router = express.Router();
 
-const home = () => {
-    const router = express.Router();
-    router.use((req, res, next) => {
-        next();
-    });
-    router.get('/', (req, res) => {
-        res.send({ "status": "OK" });
-    });
-
-    return router;
+const indexHandler = (req, res) => {
+    res.status(200);
 }
 
-export default {
-    home,
-    gpt,
-    login,
+const errorHandler = (error, req, res, next) => {
+    logger.error(error);
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
 }
+
+router.route(ROUTES.INDEX)
+    .get(indexHandler);
+
+router.route(ROUTES.LOGIN)
+    .post(loginHandler.POST);
+
+router.route(ROUTES.GPT)
+    .post(gptHandler.POST);
+
+router.route(ROUTES.ADMIN)
+    .get(adminMiddleware, adminHandler.GET);
+    
+router.route(ROUTES.ADMIN + ROUTES.NODE)
+    .post(adminMiddleware, adminHandler.NODE.POST)
+    .delete(adminMiddleware, adminHandler.NODE.DELETE);
+
+router.route(ROUTES.ADMIN + ROUTES.SYSTEM)
+    .post(adminMiddleware, adminHandler.SYSTEM.POST)
+    .delete(adminMiddleware, adminHandler.SYSTEM.DELETE);
+
+router.use(errorHandler);
+export default router;

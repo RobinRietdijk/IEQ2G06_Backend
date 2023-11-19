@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import SocketManager from './lib/socket/SocketManager.js';
-import routes from './routes/index.js';
+import router from './routes/index.js';
 import { appLogger as logger } from './util/logger.js'
 import { createServer } from 'http';
 import { requestLogger, responseLogger } from './middleware/morgan.js';
@@ -17,9 +17,7 @@ app.use(express.json());
 app.use(requestLogger);
 app.use(responseLogger);
 
-app.use(routes.home());
-app.use('/gpt', routes.gpt(io.io));
-app.use('/login', routes.login());
+app.use(router);
 
 app.set('socket', io.io);
 httpServer.listen(PORT, () => {
