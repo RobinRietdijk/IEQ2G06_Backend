@@ -13,9 +13,10 @@ const DEFAULT_OPTIONS = {
 };
 
 export default class SocketController {
+    static #instance;
     constructor(httpServer, opts = DEFAULT_OPTIONS) {
-        if (!SocketController.instance) {
-            SocketController.instance = this;
+        if (!SocketController.#instance) {
+            SocketController.#instance = this;
             this.io = new Server(httpServer, opts);
             this.initListeners();
             this.connections = 0;
@@ -24,7 +25,7 @@ export default class SocketController {
             this.systems = {};
         }
 
-        return SocketController.instance;
+        return SocketController.#instance;
     }
 
     initListeners() {
