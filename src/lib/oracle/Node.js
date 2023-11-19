@@ -1,8 +1,11 @@
+import { EVENTS } from "../../util/constants";
+
 export default class Node {
-    constructor(id, name, system_id) {
+    constructor(id, name, system_id, root=false) {
         this.id = id;
         this.name = name;
         this.system_id = system_id;
+        this.root = root;
         
         this.socket = undefined;
         this.connected = false;
@@ -11,6 +14,22 @@ export default class Node {
 
     isConnected() {
         return this.connected;
+    }
+
+    isRoot() {
+        return this.root;
+    }
+
+    setName(name) {
+        this.name = name;
+    }
+
+    setSystem(system_id) {
+        this.system_id = system_id;
+    }
+
+    setRoot(root) {
+        this.root = root;
     }
 
     connect(socket) {
@@ -24,5 +43,10 @@ export default class Node {
         this.socket = undefined;
         this.connected = false;
         this.connectedSince = new Date();
+    }
+
+    forceDisconnect(message) {
+        this.socket.emit(EVENTS.NODE_DISCONNECTED, { msg: message });
+        this.disconnect();
     }
 }

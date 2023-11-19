@@ -7,7 +7,7 @@ export default class System {
         this.name = name;
         this.max_nodes = max_nodes;
 
-        this.limit = max_nodes !== -1;
+        this.limit = max_nodes >= 0;
         this.nodes = {};
         this.root = undefined;
     }
@@ -16,20 +16,42 @@ export default class System {
         return Object.keys(this.nodes).length;
     }
 
-    getNode(id) {
-        if (this.nodes[id]) return this.nodes[id];
-        throw new Error(`Node: "${id}" does not exist in this system`);
+    setName(name) {
+        this.name = name;
     }
 
-    addNode(node, root) {
-        if (root && this.root) throw new Error(`System: "${this.id}" already has a root`);
-        if (root) this.root = node;
+    setMaxNodes(max_nodes) {
+        if (max_nodes >= 0 && this.size() > max_nodes) throw new Error(`System: "${this.id}" cannot set max nodes lower than current nodes in system`);
+        this.limit = max_nodes >= 0;
+        this.max_nodes = max_nodes;
+    }
+
+    setRoot(node) {
+        if (this.root) throw new Error(`System: "${this.id}" already has a root`);
+        this.root = node;
+    }
+
+    getNode(node_id) {
+        const node = this.nodes[node_id]
+        if (!node) throw new Error(`Node: "${node_id}" does not exist in this system`);
+
+        return node;
+    }
+
+    addNode(node) {
+        if (this.limit && this.max_nodes <= this.size()) throw new Error(`System: "${this.id}" is at max nodes`);
+        if (node.isRoot()) this.setRoot(node);
         this.nodes[node.id] = node;
+
+        return node;
     }
 
-    removeNode(id) {
-        if (!this.nodes[id]) throw new Error(`Node: "${id}" does not exist`);
-        if (this.root === id) this.root = undefined;
+    removeNode(node_id) {
+        const node = this.nodes[node_id]
+        if (!node) throw new Error(`Node: "${node_id}" does not exist`);
+        if (node.isRoot()) this.root = undefined;
         delete this.nodes[id];
+
+        return node;
     }
 }
