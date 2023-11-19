@@ -43,7 +43,27 @@ export default class SystemController {
         return node;
     }
 
-    addSystem(system_id = null, system_name, max_nodes = -1) {
+    getNode(node_id) {
+        const node = this.nodes[node_id];
+        if (!node) throw new Error(`Node: "${node_id}" does not exist`);
+        return node;
+    }
+
+    getNodes() {
+        return this.nodes;
+    }
+
+    getSystem(system_id) {
+        const system = this.systems[system_id];
+        if (!system) throw new Error(`System: "${system_id}" does not exist`);
+        return system;
+    }
+
+    getSystems() {
+        return this.systems;
+    }
+
+    createSystem(system_id = null, system_name, max_nodes = -1) {
         return this.#executeWithStateBackup(() => {
             if (!system_id) {
                 let index = 1;
@@ -100,7 +120,7 @@ export default class SystemController {
         });
     }
 
-    connectNode(node_id, node_name, system_id, socket, root) {
+    connectNode(socket, node_id, node_name, system_id, root) {
         return this.#executeWithStateBackup(() => {
             let node = this.nodes[node_id];
             if (!node) node = this.#createNode(node_id, node_name, system_id, root);
