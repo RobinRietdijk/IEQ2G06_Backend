@@ -1,6 +1,6 @@
 import { Server } from "socket.io"
 import { EVENTS } from "./constants.js";
-import { AdminConnect, Connected, Disconnect, NodeConnect, NodeData, NodeRemove } from "./eventHandlers.js";
+import { adminConnect, connected, disconnect, nodeConnect, nodeData, nodeRemove, nodeUpdate, systemCreate, systemRemove, systemUpdate } from "./eventHandlers.js";
 
 const DEFAULT_OPTIONS = {
     connectionStateRecovery: {
@@ -19,6 +19,8 @@ export default class SocketManager {
             this.io = new Server(httpServer, opts);
             this.initListeners();
             this.connections = 0;
+
+            this.nodes = {};
             this.systems = {};
         }
 
@@ -27,12 +29,16 @@ export default class SocketManager {
 
     initListeners() {
         this.io.on(EVENTS.CONNECTED, (socket) => {
-            Connected(this, socket);
-            socket.on(EVENTS.ADMIN_CONNECT, (data) => AdminConnect(this, socket, data));
-            socket.on(EVENTS.NODE_CONNECT, (data) => NodeConnect(this, socket, data));
-            socket.on(EVENTS.NODE_DATA, (data) => NodeData(this, socket, data));
-            socket.on(EVENTS.NODE_REMOVE, (data) => NodeRemove(this, socket, data));
-            socket.on(EVENTS.DISCONNECT, (data) => Disconnect(this, socket, data));
+            connected(this, socket);
+            socket.on(EVENTS.DISCONNECT, (data) => disconnect(this, socket, data));
+            socket.on(EVENTS.NODE_CONNECT, (data) => nodeConnect(this, socket, data));
+            socket.on(EVENTS.NODE_REMOVE, (data) => nodeRemove(this, socket, data));
+            socket.on(EVENTS.NODE_UPDATE, (data) => nodeUpdate(this, socket, data));
+            socket.on(EVENTS.NODE_DATA, (data) => nodeData(this, socket, data));
+            socket.on(EVENTS.SYSTEM_CREATE, (data) => systemCreate(this, socket, data));
+            socket.on(EVENTS.SYSTEM_REMOVE, (data) => systemRemove(this, socket, data));
+            socket.on(EVENTS.SYSTEM_UPDATE, (data) => systemUpdate(this, socket, data));
+            socket.on(EVENTS.ADMIN_CONNECT, (data) => adminConnect(this, socket, data));
         });
     }
 }

@@ -1,7 +1,8 @@
 export default class Node {
-    constructor(id, name) {
+    constructor(id, name, system_id) {
         this.id = id;
         this.name = name;
+        this.system_id = system_id;
         
         this.socket = undefined;
         this.connected = false;
