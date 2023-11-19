@@ -1,15 +1,12 @@
 import express from 'express';
 import { ROUTES } from '../util/constants.js';
-import { adminMiddleware } from './middleware.js';
+import { adminMiddleware } from '../middleware/admin.js';
 import { appLogger as logger } from '../util/logger.js';
+import indexHandler from './indexHandler.js';
 import loginHandler from './login/loginHandler.js'
 import gptHandler from './gpt/gptHandler.js';
 import adminHandler from './admin/adminHandler.js';
 const router = express.Router();
-
-const indexHandler = (req, res) => {
-    res.status(200).json({ status: 'OK' });
-}
 
 const errorHandler = (error, req, res, next) => {
     logger.error(error);
@@ -17,7 +14,7 @@ const errorHandler = (error, req, res, next) => {
 }
 
 router.route(ROUTES.INDEX)
-    .get(indexHandler);
+    .get(indexHandler.GET);
 
 router.route(ROUTES.LOGIN)
     .post(loginHandler.POST);
