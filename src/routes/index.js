@@ -26,12 +26,12 @@ router.route(ROUTES.ADMIN)
     .get(adminMiddleware, adminHandler.GET);
     
 router.route(ROUTES.ADMIN + ROUTES.NODE)
-    .post(adminMiddleware, adminHandler.NODE.POST)
     .delete(adminMiddleware, adminHandler.NODE.DELETE);
 
 router.route(ROUTES.ADMIN + ROUTES.SYSTEM)
     .post(adminMiddleware, adminHandler.SYSTEM.POST)
-    .delete(adminMiddleware, adminHandler.SYSTEM.DELETE);
+    .delete(adminMiddleware, adminHandler.SYSTEM.DELETE)
+    .update(adminMiddleware, adminHandler.SYSTEM.UPDATE);
 
 router.use(errorHandler);
 export default router;

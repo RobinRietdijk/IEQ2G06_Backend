@@ -4,6 +4,9 @@ const systemHandler = {
 
     DELETE: (req, res) => {
     },
+
+    UPDATE: (req, res) => {
+    }
 };
 
 export default systemHandler;
