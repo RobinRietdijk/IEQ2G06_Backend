@@ -20,9 +20,6 @@ export default class SocketController {
             this.io = new Server(httpServer, opts);
             this.initListeners();
             this.connections = 0;
-
-            this.nodes = {};
-            this.systems = {};
         }
 
         return SocketController.#instance;
