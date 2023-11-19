@@ -1,5 +1,5 @@
 import Node from './Node.js'
-import { EVENTS } from '../socket/constants.js';
+import { EVENTS } from '../../util/constants.js';
 
 export default class System {
     constructor(id, name, max_nodes = -1) {

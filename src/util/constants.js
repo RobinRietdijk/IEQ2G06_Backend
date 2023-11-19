@@ -1,3 +1,20 @@
+import bcrypt from 'bcrypt';
+
+export const SECRET = process.env.JWT_KEY || 'jwtsecret'; 
+export const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+export const ADMIN_PASSWD = process.env.ADMIN_PASSWD || bcrypt.hashSync('admin', 10);
+
+export const ROUTES = {
+    INDEX: '/',
+    LOGIN: '/login',
+    GPT: '/gpt',
+    ADMIN: '/admin',
+    NODES: '/nodes',
+    NODE: '/node',
+    SYSTEMS: '/systems',
+    SYSTEM: '/system',
+}
+
 export const EVENTS = {
     CONNECTED: 'connected',
     DISCONNECT: 'disconnect',

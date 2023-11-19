@@ -1,7 +1,7 @@
 import { UnauthorizedError } from "../../util/error.js";
 import { socketioLogger as logger } from "../../util/logger.js";
 import jwt from "jsonwebtoken";
-import { EVENTS } from "./constants.js";
+import { EVENTS } from "../../util/constants.js";
 const SECRET = process.env.JWT_KEY || 'jwtsecret';
 
 export function isAdmin(socket, callback, ...args) {

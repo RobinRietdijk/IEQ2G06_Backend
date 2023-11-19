@@ -1,6 +1,6 @@
 import { isAdmin, emitError, trimSocket } from "./util.js";
 import { InvalidRequestError } from "../../util/error.js";
-import { EVENTS, ROOMS } from "./constants.js";
+import { EVENTS, ROOMS } from "../../util/constants.js";
 import { socketioLogger as logger } from "../../util/logger.js";
 import Node from '../oracle/Node.js'
 
@@ -98,7 +98,7 @@ export function nodeRemove(sm, socket, data) {
     isAdmin(socket, (sm, socket, data) => {
         const { node_id } = data;
         const node = sm.nodes[node_id];
-        
+
         if (!node) {
             emitError(socket, InvalidRequestError(`Node: "${node_id}" does not exist`));
             return;
