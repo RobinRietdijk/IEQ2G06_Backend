@@ -1,8 +1,8 @@
 import ChatGPT from '../../lib/ChatGPT.js';
-import SocketManager from '../../lib/socket/SocketManager.js';
+import SocketController from '../../lib/socketio/SocketController.js';
 let api = undefined
-const sm = new SocketManager();
-api = new ChatGPT(sm.io);
+const sc = new SocketController();
+api = new ChatGPT(sc.io);
 
 const gptHandler = {
     POST: async (req, res) => {
