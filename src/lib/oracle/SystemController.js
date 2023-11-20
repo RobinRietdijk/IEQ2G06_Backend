@@ -93,12 +93,12 @@ export default class SystemController {
         });
     }
 
-    updateSystem(system_id, name = null, max_nodes = null) {
+    updateSystem(system_id, system_name = null, max_nodes = null) {
         return this.#executeWithStateBackup(() => {
             const system = this.systems[system_id];
             if (!system) throw new Error(`System: "${system_id}" does not exist`);
 
-            if (name) system.setName(name);
+            if (system_name) system.setName(system_name);
             if (max_nodes) system.setMaxNodes(max_nodes);
 
             return system;

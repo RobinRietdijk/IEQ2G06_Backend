@@ -9,7 +9,9 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 const httpServer = createServer(app);
-const sc = new SocketController(httpServer);
+const sc = new SocketController();
+sc.initSocketController(httpServer);
+
 app.use(cors({
     origin: '*'
 }));

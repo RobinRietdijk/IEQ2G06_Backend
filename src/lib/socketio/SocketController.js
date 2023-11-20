@@ -14,15 +14,26 @@ const DEFAULT_OPTIONS = {
 
 export default class SocketController {
     static #instance;
-    constructor(httpServer, opts = DEFAULT_OPTIONS) {
-        if (!SocketController.#instance) {
-            SocketController.#instance = this;
-            this.io = new Server(httpServer, opts);
-            this.initListeners();
-            this.connections = 0;
-        }
-
+    constructor() {
+        if (!SocketController.#instance) SocketController.#instance = this;
         return SocketController.#instance;
+    }
+    
+    initSocketController(httpServer, opts=DEFAULT_OPTIONS) {
+        if (io) throw new Error('SocketController has already been initialized');
+        this.io = new Server(httpServer, opts);
+        this.initListeners();
+        this.connections = 0;
+    }
+
+    isInitiated() {
+        return Boolean(this.io);
+    }
+
+    emitTo(room, event, data) {
+        if (!this.isInitiated()) throw new Error('SocketController has not been initiated yet');
+        const io = this.getIO();
+        io.to(room).emit(event, data);
     }
 
     initListeners() {
