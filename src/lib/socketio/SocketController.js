@@ -1,6 +1,6 @@
 import { Server } from "socket.io"
 import { EVENTS } from "../../util/constants.js";
-import { adminConnect, connected, disconnect, nodeConnect, nodeData } from "./eventHandlers.js";
+import { adminConnect, connection, disconnect, nodeConnect, nodeData } from "./eventHandlers.js";
 
 const DEFAULT_OPTIONS = {
     connectionStateRecovery: {
@@ -37,9 +37,10 @@ export default class SocketController {
     }
 
     initListeners() {
-        this.io.on(EVENTS.CONNECTED, (socket) => {
-            connected(this, socket);
+        this.io.on(EVENTS.CONNECTION, (socket) => {
+            connection(this, socket);
             socket.on(EVENTS.DISCONNECT, (data) => disconnect(this, socket, data));
+            socket.on(EVENTS.PING, () => socket.emit(EVENTS.PONG));
             socket.on(EVENTS.NODE_CONNECT, (data) => nodeConnect(this, socket, data));
             socket.on(EVENTS.NODE_DATA, (data) => nodeData(this, socket, data));
             socket.on(EVENTS.ADMIN_CONNECT, (data) => adminConnect(this, socket, data));

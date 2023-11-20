@@ -6,13 +6,13 @@ import SystemController from "../oracle/SystemController.js";
 
 const sc = new SystemController();
 
-export function connected(sm, socket) {
+export function connection(sm, socket) {
     logger.info('Connected', JSON.parse(trimSocket(socket)));
     socket.onAny((event, ...args) => {
         logger.event('<<', JSON.parse(trimSocket(socket, { event: event, args: args })));
     });
 
-    socket.prependAny((event, ...args) => {
+    socket.onAnyOutgoing((event, ...args) => {
         logger.event('>>', JSON.parse(trimSocket(socket, { event: event, args: args })));
     });
     sm.connections += 1;

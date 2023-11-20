@@ -16,7 +16,7 @@ export const ROUTES = {
 }
 
 export const EVENTS = {
-    CONNECTED: 'connected',
+    CONNECTION: 'connection',
     DISCONNECT: 'disconnect',
     NODE_CONNECT: 'node_connect',
     NODE_CONNECTED: 'node_connected',
@@ -37,6 +37,8 @@ export const EVENTS = {
     ADMIN_CONNECT: 'admin_connect',
     ADMIN_INIT: 'admin_init',
     ERROR: 'error',
+    PING: 'ping',
+    PONG: 'pong'
 }
 
 export const ROOMS = {

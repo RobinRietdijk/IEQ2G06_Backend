@@ -96,7 +96,7 @@ const levels = {
 }
 const socketioLogger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'verbose',
-    levels: levels.levels,
+    levels: levels,
     format: format.combine(
         format.timestamp({
             format: 'YYYY-MM-DD hh:mm:ss.SSS A'
