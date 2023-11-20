@@ -20,7 +20,7 @@ const systemHandler = {
         res.status(200).send();
     },
 
-    UPDATE: (req, res) => {
+    PATCH: (req, res) => {
         const { system_id, system_name, max_nodes } = req.body;
         const system = systemController.updateSystem(system_id, system_name, max_nodes);
         socketController.emitTo(ROOMS.ADMIN, EVENTS.SYSTEM_UPDATED, { system: system });
