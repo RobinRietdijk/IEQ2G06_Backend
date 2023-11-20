@@ -6,17 +6,20 @@ const SECRET = process.env.JWT_KEY || 'jwtsecret';
 
 export function isAdmin(socket, callback, ...args) {
     const { auth } = socket.handshake;
-    if (auth && auth.token) {
+        if (auth && auth.token) {
         try {
             const decoded = jwt.verify(auth.token, SECRET);
             if (decoded.isAdmin) callback(...args);
             else {
                 emitError(socket, UnauthorizedError('Invalid token'));
             }
+            return;
         } catch (error) {
             emitError(socket, UnauthorizedError('Token verification failed'));
+            return;
         }
     }
+    emitError(socket, UnauthorizedError('Unauthorized request'));
 }
 
 export function emitError(socket, error, callback = () => { }) {
