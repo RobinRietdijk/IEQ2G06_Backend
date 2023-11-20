@@ -1,6 +1,6 @@
-import Node from "./Node";
-import System from "./System";
-import { appLogger as logger } from "../../util/logger";
+import Node from "./Node.js";
+import System from "./System.js";
+import { appLogger as logger } from "../../util/logger.js";
 
 export default class SystemController {
     static #instance;
@@ -15,7 +15,7 @@ export default class SystemController {
     }
 
     #executeWithStateBackup(f) {
-        const backup = { nodes: { ...this.nodes }, systems: { ...this.systems }};
+        const backup = { nodes: { ...this.nodes }, systems: { ...this.systems } };
         try {
             const res = f();
 
@@ -153,7 +153,7 @@ export default class SystemController {
     }
 
     disconnectNode(node_id) {
-        return this.#executeWithStateBackup(() =>  {
+        return this.#executeWithStateBackup(() => {
             const node = this.nodes[node_id];
             if (!node) throw new Error(`Node: "${node_id}" does not exist`);
             node.disconnect();

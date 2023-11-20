@@ -1,6 +1,6 @@
-import SystemController from "../../../lib/oracle/SystemController";
-import SocketController from "../../../lib/socketio/SocketController";
-import { EVENTS, ROOMS } from "../../../util/constants";
+import SystemController from "../../../lib/oracle/SystemController.js";
+import SocketController from "../../../lib/socketio/SocketController.js";
+import { EVENTS, ROOMS } from "../../../util/constants.js";
 
 const systemController = new SystemController();
 const socketController = new SocketController();

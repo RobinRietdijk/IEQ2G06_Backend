@@ -15,17 +15,17 @@ winston.addColors(colors);
 const appLogFile = new winston.transports.DailyRotateFile({
     filename: './logs/app-%DATE%.log',
     datePattern: 'YYYY-MM-DD',
-    maxFiles: '7d',
+    maxFiles: '3d',
 });
 const httpLogFile = new winston.transports.DailyRotateFile({
     filename: './logs/http-%DATE%.log',
     datePattern: 'YYYY-MM-DD',
-    maxFiles: '7d',
+    maxFiles: '3d',
 });
 const socketLogFile = new winston.transports.DailyRotateFile({
     filename: './logs/socketio-%DATE%.log',
     datePattern: 'YYYY-MM-DD',
-    maxFiles: '7d',
+    maxFiles: '3d',
 });
 
 const appLogger = winston.createLogger({
