@@ -1,6 +1,7 @@
 import Node from "./Node.js";
 import System from "./System.js";
 import { appLogger as logger } from "../../util/logger.js";
+import { EVENTS } from "../../util/constants.js";
 
 export default class SystemController {
     static #instance;
@@ -9,6 +10,7 @@ export default class SystemController {
             SystemController.#instance = this;
             this.systems = {};
             this.nodes = {};
+            this.loop(1);
         }
 
         return SystemController.#instance;
@@ -160,5 +162,21 @@ export default class SystemController {
 
             return node;
         });
+    }
+
+    loop(interval) {
+        setInterval(() => {
+            try {
+                for (const system of Object.values(this.systems)) {
+                    if (system.hasRoot()) {
+                        const data_package = system.createDataPackage();
+                        const root = system.getRoot();
+                        root.emit(EVENTS.ROOT_PACKAGE, { data: data_package });
+                    }
+                }
+            } catch (error) {
+                logger.error(error);
+            }
+        }, interval * 1000);
     }
 }

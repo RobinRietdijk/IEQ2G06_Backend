@@ -10,6 +10,8 @@ export default class Node {
         this.socket = undefined;
         this.connected = false;
         this.connectedSince = undefined;
+
+        this.data = undefined;
     }
 
     isConnected() {
@@ -32,6 +34,14 @@ export default class Node {
         this.root = root;
     }
 
+    setData(data) {
+        this.data = data;
+    }
+
+    getData() {
+        return this.data;
+    }
+
     connect(socket) {
         if (this.connected) throw new Error(`Node: "${this.id} is already connected"`);
         this.socket = socket;
@@ -51,5 +61,10 @@ export default class Node {
         if (!this.connected) throw new Error(`Node: "${this.id} is not connected"`);
         this.socket.emit(EVENTS.NODE_DISCONNECTED, { msg: message });
         this.disconnect();
+    }
+
+    emit(event, data) {
+        if (!this.connected) throw new Error(`Node: "${this.id} is not connected"`);
+        this.socket.emit(event, data);
     }
 }

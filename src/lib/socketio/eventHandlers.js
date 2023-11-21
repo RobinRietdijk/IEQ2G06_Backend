@@ -78,7 +78,19 @@ export function nodeRemove(sm, socket, data) {
 }
 
 export function nodeData(sm, socket, data) {
+    const { data: node_data } = data;
+    const node_id = socket.node_id;
+    if (!node_id || !node_data ) {
+        emitError(socket, InvalidRequestError('Invalid request data'));
+        return;
+    }
 
+    try {
+        const node = sc.getNode(node_id);
+        node.setData(node_data);
+    } catch (error) {
+        emitError(socket, InvalidRequestError(error.message));
+    }
 }
 
 export function systemCreate(sm, socket, data) {

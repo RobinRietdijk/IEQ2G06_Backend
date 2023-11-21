@@ -28,6 +28,7 @@ export const EVENTS = {
     NODE_UPDATE: 'node_update',
     NODE_UPDATED: 'node_updated',
     NODE_DATA: 'node_data',
+    ROOT_PACKAGE: 'root_package',
     SYSTEM_CREATE: 'system_create',
     SYSTEM_CREATED: 'system_created',
     SYSTEM_REMOVE: 'system_remove',
