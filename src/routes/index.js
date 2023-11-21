@@ -17,7 +17,11 @@ router.route(ROUTES.INDEX)
     .get(indexHandler.GET);
 
 router.route(ROUTES.LOGIN)
+    .get(loginHandler.GET)
     .post(loginHandler.POST);
+
+router.route(ROUTES.LOGIN + ROUTES.REFRESH)
+    .post(loginHandler.REFRESH.POST);
 
 router.route(ROUTES.GPT)
     .post(gptHandler.POST);

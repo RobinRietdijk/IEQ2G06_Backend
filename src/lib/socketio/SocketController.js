@@ -1,6 +1,7 @@
 import { Server } from "socket.io"
 import { EVENTS } from "../../util/constants.js";
-import { adminConnect, connection, disconnect, nodeConnect, nodeData } from "./eventHandlers.js";
+import { connection, disconnect, nodeConnect, nodeData } from "./eventHandlers.js";
+import SystemController from "../oracle/SystemController.js";
 
 const DEFAULT_OPTIONS = {
     connectionStateRecovery: {
@@ -22,11 +23,13 @@ export default class SocketController {
     initSocketController(httpServer, opts=DEFAULT_OPTIONS) {
         if (this.io) throw new Error('SocketController has already been initialized');
         this.io = new Server(httpServer, opts);
+        this.sc = new SystemController();
+        this.sc.initSocketController(this);
         this.initListeners();
         this.connections = 0;
     }
 
-    isInitiated() {
+    isInitialized() {
         return Boolean(this.io);
     }
 
@@ -43,7 +46,6 @@ export default class SocketController {
             socket.on(EVENTS.PING, () => socket.emit(EVENTS.PONG));
             socket.on(EVENTS.NODE_CONNECT, (data) => nodeConnect(this, socket, data));
             socket.on(EVENTS.NODE_DATA, (data) => nodeData(this, socket, data));
-            socket.on(EVENTS.ADMIN_CONNECT, (data) => adminConnect(this, socket, data));
         });
     }
 }
