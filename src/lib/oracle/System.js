@@ -56,7 +56,7 @@ export default class System {
         const node = this.nodes[node_id]
         if (!node) throw new Error(`Node: "${node_id}" does not exist`);
         if (node.isRoot()) this.root = undefined;
-        delete this.nodes[id];
+        delete this.nodes[node_id];
 
         return node;
     }
