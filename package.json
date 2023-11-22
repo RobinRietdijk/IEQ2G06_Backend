@@ -1,8 +1,8 @@
 {
-  "name": "ieq2_backend",
+  "name": "ieq2g06_backend",
   "version": "1.0.0",
   "type": "module",
-  "description": "IEQ2 Backend",
+  "description": "IEQ2G06 Backend",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/app.js",
