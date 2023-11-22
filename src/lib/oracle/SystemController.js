@@ -1,24 +1,19 @@
 import Node from "./Node.js";
 import System from "./System.js";
 import { appLogger as logger } from "../../util/logger.js";
-import { EVENTS, ROOMS } from "../../util/constants.js";
 export default class SystemController {
     static #instance;
     constructor() {
         if (!SystemController.#instance) {
             SystemController.#instance = this;
             this.systems = {
-                'default': new System('default', 'Default system', 8),
+                'default': new System('default', 'Default system'),
+                'default-2': new System('default-2', 'Default system', 8)
             };
             this.nodes = {};
-            this.loop(1);
         }
 
         return SystemController.#instance;
-    }
-
-    initSocketController(ioc) {
-        if (!this.ioc) this.ioc = ioc;
     }
 
     #executeWithStateBackup(f) {
@@ -167,24 +162,5 @@ export default class SystemController {
 
             return node;
         });
-    }
-
-    loop(interval) {
-        setInterval(() => {
-            try {
-                const system_packages = {};
-                for (const system of Object.values(this.systems)) {
-                    const data_package = system.createDataPackage();
-                    if (system.hasRoot()) {
-                        const root = system.getRoot();
-                        root.emit(EVENTS.SYSTEM_DATA, { system_id: system.id, data: data_package });
-                    }
-                    system_packages[system.id] = data_package;
-                }
-                if (this.ioc.isInitialized()) this.ioc.io.to(ROOMS.SPECTATOR).emit(EVENTS.SYSTEMS_DATA, { data: system_packages });
-            } catch (error) {
-                logger.error(error);
-            }
-        }, interval * 1000);
     }
 }

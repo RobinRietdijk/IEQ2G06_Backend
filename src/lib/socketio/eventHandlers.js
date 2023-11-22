@@ -13,7 +13,7 @@ export function connection(ioc, socket) {
     });
 
     socket.join(ROOMS.SPECTATOR);
-    socket.emit(EVENTS.INITIALIZE, { systems: ioc.sc.getSystems(), nodes: ioc.sc.getNodes() });
+    socket.emit(EVENTS.INITIALIZE, { systems: ioc.sc.getSystems() });
     ioc.connections += 1;
 }
 
@@ -41,7 +41,7 @@ export function nodeConnect(ioc, socket, data) {
     }
 
     try {
-        const node = sc.connectNode(socket, node_id, node_name, system_id, root);
+        const node = ioc.sc.connectNode(socket, node_id, node_name, system_id, root);
         socket.leave(ROOMS.SPECTATOR);
         ioc.io.to(ROOMS.SPECTATOR).emit(EVENTS.NODE_CONNECTED, { node: node });
     } catch (error) {
@@ -58,7 +58,7 @@ export function nodeData(ioc, socket, data) {
     }
 
     try {
-        const node = sc.getNode(node_id);
+        const node = ioc.sc.getNode(node_id);
         node.setData(node_data);
     } catch (error) {
         emitError(socket, InvalidRequestError(error.message));
