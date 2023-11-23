@@ -1,16 +1,14 @@
+import fs from 'fs/promises'
 import Node from "./Node.js";
 import System from "./System.js";
+import { SYSTEM_FILENAME } from '../../util/constants.js';
 import { appLogger as logger } from "../../util/logger.js";
 export default class SystemController {
     static #instance;
     constructor() {
         if (!SystemController.#instance) {
             SystemController.#instance = this;
-            this.systems = {
-                'default': new System('default', 'Default system'),
-                'default-2': new System('default-2', 'Default system', 8)
-            };
-            this.nodes = {};
+            this.initialized = false;
         }
 
         return SystemController.#instance;
@@ -45,27 +43,72 @@ export default class SystemController {
         return node;
     }
 
+    async #writeSystemsToFile() {
+        try {
+            const data = {};
+            Object.values(this.systems).forEach((system) => {
+                data[system.id] = {
+                    "id": system.id,
+                    "name": system.name,
+                    "max_nodes": system.max_nodes,
+                };
+            });
+            await fs.writeFile(SYSTEM_FILENAME, data, 'utf8');
+        } catch {
+            logger.error('Error whilst writing systems to file', error);
+        }
+    }
+
+    async #readSystemsFromFile() {
+        try {
+            const data = await fs.readFile(SYSTEM_FILENAME, 'utf8');
+            const parsed = JSON.parse(data);
+            this.systems = {};
+            Object.values(parsed).forEach((system) => {
+                this.systems[system.id] = new System(system.id, system.name, system.max_nodes);
+            });
+        } catch (error) {
+            logger.error('Error whilst reading systems from file', error);
+            this.systems = {};
+        }
+    }
+
+    async initialize() {
+        this.#readSystemsFromFile()
+        this.initialized = true;
+    }
+
+    isInitialized() {
+        if (!this.initialized) throw new Error('Systemcontroller is not yet initialized');
+        return true;
+    }
+
     getNode(node_id) {
+        this.isInitialized();
         const node = this.nodes[node_id];
         if (!node) throw new Error(`Node: "${node_id}" does not exist`);
         return node;
     }
 
     getNodes() {
+        this.isInitialized();
         return this.nodes;
     }
 
     getSystem(system_id) {
+        this.isInitialized();
         const system = this.systems[system_id];
         if (!system) throw new Error(`System: "${system_id}" does not exist`);
         return system;
     }
 
     getSystems() {
+        this.isInitialized();
         return this.systems;
     }
 
     createSystem(system_id = null, system_name, max_nodes = -1) {
+        this.isInitialized();
         return this.#executeWithStateBackup(() => {
             if (!system_id) {
                 let index = 1;
@@ -78,11 +121,13 @@ export default class SystemController {
             const system = new System(system_id, system_name, max_nodes);
             this.systems[system_id] = system;
 
+            this.#writeSystemsToFile();
             return system;
         });
     }
 
     removeSystem(system_id) {
+        this.isInitialized();
         return this.#executeWithStateBackup(() => {
             const system = this.systems[system_id];
             if (!system) throw new Error(`System: "${system_id}" does not exist`);
@@ -91,11 +136,13 @@ export default class SystemController {
             });
             delete this.systems[system_id];
 
+            this.#writeSystemsToFile();
             return system;
         });
     }
 
     updateSystem(system_id, system_name = null, max_nodes = null) {
+        this.isInitialized();
         return this.#executeWithStateBackup(() => {
             const system = this.systems[system_id];
             if (!system) throw new Error(`System: "${system_id}" does not exist`);
@@ -103,11 +150,13 @@ export default class SystemController {
             if (system_name) system.setName(system_name);
             if (max_nodes) system.setMaxNodes(max_nodes);
 
+            this.#writeSystemsToFile();
             return system;
         });
     }
 
     removeNode(node_id) {
+        this.isInitialized();
         return this.#executeWithStateBackup(() => {
             const node = this.nodes[node_id];
             if (!node) throw new Error(`Node: "${node_id}" does not exist`);
@@ -123,6 +172,7 @@ export default class SystemController {
     }
 
     connectNode(socket, node_id, node_name, system_id, root) {
+        this.isInitialized();
         return this.#executeWithStateBackup(() => {
             let node = this.nodes[node_id];
             if (!node) node = this.#createNode(node_id, node_name, system_id, root);
@@ -155,6 +205,7 @@ export default class SystemController {
     }
 
     disconnectNode(node_id) {
+        this.isInitialized();
         return this.#executeWithStateBackup(() => {
             const node = this.nodes[node_id];
             if (!node) throw new Error(`Node: "${node_id}" does not exist`);

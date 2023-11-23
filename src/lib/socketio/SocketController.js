@@ -24,7 +24,10 @@ export default class SocketController {
     initSocketController(httpServer, opts=DEFAULT_OPTIONS, ups=1) {
         if (this.io) throw new Error('SocketController has already been initialized');
         this.io = new Server(httpServer, opts);
-        this.sc = new SystemController();
+        (async () => {
+            this.sc = new SystemController();
+            this.sc.initialize();
+        })();
         this.ups=ups;
         this.initListeners();
         this.initDataLoop();

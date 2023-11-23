@@ -5,6 +5,8 @@ export const REFRESH_SECRET = process.env.JWT_REFRESH_KEY || 'jwt_refresh_secret
 export const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 export const ADMIN_PASSWD = process.env.ADMIN_PASSWD || bcrypt.hashSync('admin', 10);
 
+export const SYSTEM_FILENAME = process.env.SYSTEM_FILENAME || 'systems.json'
+
 export const ROUTES = {
     INDEX: '/',
     LOGIN: '/login',
