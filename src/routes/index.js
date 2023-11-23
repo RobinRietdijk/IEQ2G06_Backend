@@ -9,7 +9,7 @@ import adminHandler from './admin/adminHandler.js';
 const router = express.Router();
 
 const errorHandler = (error, req, res, next) => {
-    logger.error(error);
+    logger.error(error.message);
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
 }
 
@@ -25,13 +25,15 @@ router.route(ROUTES.GPT)
 router.route(ROUTES.ADMIN)
     .get(adminMiddleware, adminHandler.GET);
     
-router.route(ROUTES.ADMIN + ROUTES.NODE)
+router.route(ROUTES.ADMIN + ROUTES.NODE + '/:node_id')
     .delete(adminMiddleware, adminHandler.NODE.DELETE);
 
 router.route(ROUTES.ADMIN + ROUTES.SYSTEM)
     .post(adminMiddleware, adminHandler.SYSTEM.POST)
-    .delete(adminMiddleware, adminHandler.SYSTEM.DELETE)
     .patch(adminMiddleware, adminHandler.SYSTEM.PATCH);
+
+router.route(ROUTES.ADMIN + ROUTES.SYSTEM + '/:system_id')
+    .delete(adminMiddleware, adminHandler.SYSTEM.DELETE)
 
 router.use(errorHandler);
 export default router;

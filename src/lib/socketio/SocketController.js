@@ -40,8 +40,7 @@ export default class SocketController {
 
     emitTo(room, event, data) {
         if (!this.isInitialized()) throw new Error('SocketController has not been initiated yet');
-        const io = this.getIO();
-        io.to(room).emit(event, data);
+        this.io.to(room).emit(event, data);
     }
 
     initListeners() {

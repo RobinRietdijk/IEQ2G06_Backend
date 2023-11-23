@@ -24,7 +24,7 @@ export default class SystemController {
 
             return res;
         } catch (error) {
-            logger.error('An error occured in the Systemcontroller: ', error);
+            logger.error('An error occured in the Systemcontroller: ', error.message);
             this.nodes = backup.nodes;
             this.systems = backup.systems;
             throw error;
@@ -53,9 +53,9 @@ export default class SystemController {
                     "max_nodes": system.max_nodes,
                 };
             });
-            await fs.writeFile(SYSTEM_FILENAME, data, 'utf8');
-        } catch {
-            logger.error('Error whilst writing systems to file', error);
+            await fs.writeFile(SYSTEM_FILENAME, JSON.stringify(data, null, 2), 'utf8');
+        } catch (error) {
+            logger.error('Error whilst writing systems to file: ', error);
         }
     }
 
@@ -68,7 +68,7 @@ export default class SystemController {
                 this.systems[system.id] = new System(system.id, system.name, system.max_nodes);
             });
         } catch (error) {
-            logger.error('Error whilst reading systems from file', error);
+            logger.error('Error whilst reading systems from file: ', error);
             this.systems = {};
         }
     }
@@ -131,7 +131,7 @@ export default class SystemController {
         return this.#executeWithStateBackup(() => {
             const system = this.systems[system_id];
             if (!system) throw new Error(`System: "${system_id}" does not exist`);
-            system.nodes.forEach(node => {
+            Object.values(system.nodes).forEach(node => {
                 node.forceDisconnect(`System: "${system_id}" has been removed`);
             });
             delete this.systems[system_id];

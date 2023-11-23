@@ -9,21 +9,21 @@ const systemHandler = {
     POST: (req, res) => {
         const { system_id, system_name, max_nodes } = req.body;
         const system = systemController.createSystem(system_id, system_name, max_nodes);
-        socketController.emitTo(ROOMS.ADMIN, EVENTS.SYSTEM_CREATED, { system: system });
+        socketController.emitTo(ROOMS.SPECTATOR, EVENTS.SYSTEM_CREATED, { system: system });
         res.status(200).send();
     },
 
     DELETE: (req, res) => {
-        const { system_id } = req.body;
+        const system_id = req.params.system_id;
         const system = systemController.removeSystem(system_id);
-        socketController.emitTo(ROOMS.ADMIN, EVENTS.SYSTEM_REMOVED, { system: system });
+        socketController.emitTo(ROOMS.SPECTATOR, EVENTS.SYSTEM_REMOVED, { system: system });
         res.status(200).send();
     },
 
     PATCH: (req, res) => {
         const { system_id, system_name, max_nodes } = req.body;
         const system = systemController.updateSystem(system_id, system_name, max_nodes);
-        socketController.emitTo(ROOMS.ADMIN, EVENTS.SYSTEM_UPDATED, { system: system });
+        socketController.emitTo(ROOMS.SPECTATOR, EVENTS.SYSTEM_UPDATED, { system: system });
         res.status(200).send();
     }
 };

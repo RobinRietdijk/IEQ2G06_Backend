@@ -1,6 +1,7 @@
 {
-    "default": {
-        "id": "default",
-        "name": "Default system"
-    }
+  "default": {
+    "id": "default",
+    "name": "Default system",
+    "max_nodes": -1
+  }
 }
