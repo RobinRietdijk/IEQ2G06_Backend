@@ -63,9 +63,13 @@ export default class System {
 
     createDataPackage() {
         const data_package = []
+        let changed = false;
         for (const node of Object.values(this.nodes)) {
-            if (!node.isRoot()) data_package.push(node.getData());
+            if (!node.isRoot()) {
+                if (node.hasChanged()) changed = true;
+                data_package.push(node.getData());
+            }
         }
-        return data_package;
+        return changed, data_package;
     }
 }

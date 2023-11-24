@@ -13,7 +13,8 @@ export default class Node {
         this.connected = false;
         this.connectedSince = undefined;
 
-        this.data = undefined;
+        this.data = {};
+        this.changed = false;
     }
 
     isConnected() {
@@ -24,8 +25,16 @@ export default class Node {
         return this.root;
     }
 
+    getName() {
+        return this.name
+    }
+
     setName(name) {
         this.name = name;
+    }
+
+    getSystem() {
+        return this.system_id;
     }
 
     setSystem(system_id) {
@@ -37,11 +46,17 @@ export default class Node {
     }
 
     setData(data) {
+        this.changed = true;
         this.data = data;
     }
 
     getData() {
+        this.changed = false;
         return this.data;
+    }
+
+    hasChanged() {
+        return this.changed;
     }
 
     connect(socket) {

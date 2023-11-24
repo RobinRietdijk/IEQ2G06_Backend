@@ -20,15 +20,15 @@ export default class SocketController {
         if (!SocketController.#instance) SocketController.#instance = this;
         return SocketController.#instance;
     }
-    
-    initSocketController(httpServer, opts=DEFAULT_OPTIONS, ups=1) {
+
+    initSocketController(httpServer, opts = DEFAULT_OPTIONS, ups = 1) {
         if (this.io) throw new Error('SocketController has already been initialized');
         this.io = new Server(httpServer, opts);
         (async () => {
             this.sc = new SystemController();
             this.sc.initialize();
         })();
-        this.ups=ups;
+        this.ups = ups;
         this.initListeners();
         this.initDataLoop();
         this.connections = 0;
@@ -59,15 +59,16 @@ export default class SocketController {
                 const system_packages = {};
                 const systems = this.sc.getSystems();
                 for (const system of Object.values(systems)) {
-                    const data_package = system.createDataPackage();
-                    if (system.hasRoot()) {
-                        const root = system.getRoot();
-                        if (root.isConnected()) root.emit(EVENTS.SYSTEM_DATA, { data: data_package });
+                    const { changed, data_package } = system.createDataPackage();
+                    if (changed) {
+                        if (system.hasRoot()) {
+                            const root = system.getRoot();
+                            if (root.isConnected()) root.emit(EVENTS.SYSTEM_DATA, { data: data_package });
+                        }
+                        system_packages[system.id] = data_package;
                     }
-                    system_packages[system.id] = data_package;
                 }
-
-                this.io.to(ROOMS.SPECTATOR).emit(EVENTS.SYSTEMS_DATA, { data: system_packages });
+                if (Object.keys(system_packages).length !== 0) this.io.to(ROOMS.SPECTATOR).emit(EVENTS.SYSTEMS_DATA, { data: system_packages });
             } catch (error) {
                 logger.error(error.message);
             }
