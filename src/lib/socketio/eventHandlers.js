@@ -35,7 +35,7 @@ export function disconnect(ioc, socket, data) {
 
 export function nodeConnect(ioc, socket, data) {
     const { node_id, node_name, system_id, root } = data;
-    if (!node_id || !node_name || !system_id || !root) {
+    if (!node_id || !node_name || !system_id) {
         emitError(socket, InvalidRequestError('Invalid connection data'));
         return;
     }

@@ -132,7 +132,13 @@ export default class SystemController {
             const system = this.systems[system_id];
             if (!system) throw new Error(`System: "${system_id}" does not exist`);
             Object.values(system.nodes).forEach(node => {
-                node.forceDisconnect(`System: "${system_id}" has been removed`);
+                try {
+                    node.forceDisconnect(`System: "${system_id}" has been removed`);
+                } catch (error) {
+                    logger.error(error.message);
+                } finally {
+                    delete this.systems[node.id];
+                }
             });
             delete this.systems[system_id];
 
