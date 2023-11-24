@@ -7,6 +7,8 @@ export const ADMIN_PASSWD = process.env.ADMIN_PASSWD || bcrypt.hashSync('admin',
 
 export const SYSTEM_FILENAME = process.env.SYSTEM_FILENAME || 'systems.json'
 
+export const UPS = process.env.UPS || '20';
+
 export const ROUTES = {
     INDEX: '/',
     LOGIN: '/login',
@@ -24,6 +26,7 @@ export const EVENTS = {
     CONNECTION: 'connection',
     DISCONNECT: 'disconnect',
     INITIALIZE: 'initialize',
+    NODE_INIT: 'node_init',
     NODE_CONNECT: 'node_connect',
     NODE_CONNECTED: 'node_connected',
     NODE_DISCONNECT: 'node_disconnect',

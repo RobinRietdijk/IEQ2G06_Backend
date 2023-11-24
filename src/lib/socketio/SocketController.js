@@ -1,5 +1,5 @@
 import { Server } from "socket.io"
-import { EVENTS, ROOMS } from "../../util/constants.js";
+import { EVENTS, ROOMS, UPS } from "../../util/constants.js";
 import { connection, disconnect, nodeConnect, nodeData } from "./eventHandlers.js";
 import SystemController from "../oracle/SystemController.js";
 import { appLogger as logger } from "../../util/logger.js";
@@ -21,14 +21,13 @@ export default class SocketController {
         return SocketController.#instance;
     }
 
-    initSocketController(httpServer, opts = DEFAULT_OPTIONS, ups = 1) {
+    initSocketController(httpServer, opts = DEFAULT_OPTIONS) {
         if (this.io) throw new Error('SocketController has already been initialized');
         this.io = new Server(httpServer, opts);
         (async () => {
             this.sc = new SystemController();
             this.sc.initialize();
         })();
-        this.ups = ups;
         this.initListeners();
         this.initDataLoop();
         this.connections = 0;
@@ -72,6 +71,6 @@ export default class SocketController {
             } catch (error) {
                 logger.error(error.message);
             }
-        }, 1000 / this.ups);
+        }, 1000 / UPS);
     }
 }
