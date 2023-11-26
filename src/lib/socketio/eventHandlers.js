@@ -12,8 +12,10 @@ export function connection(ioc, socket) {
         logger.event('>>', JSON.parse(trimSocket(socket, { event: event, args: args })));
     });
 
-    socket.join(ROOMS.SPECTATOR);
-    socket.emit(EVENTS.INITIALIZE, { systems: ioc.sc.getSystems() });
+    if (socket.handshake.query.spectator) {
+        socket.join(ROOMS.SPECTATOR);
+        socket.emit(EVENTS.INITIALIZE, { systems: ioc.sc.getSystems() });
+    }
     ioc.connections += 1;
 }
 
