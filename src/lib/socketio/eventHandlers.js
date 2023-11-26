@@ -36,7 +36,7 @@ export function disconnect(ioc, socket, data) {
 }
 
 export function nodeConnect(ioc, socket, data) {
-    const { node_id, node_name, system_id, root } = data;
+    const { node_id, node_name, system_id, root, data: node_data } = data;
     if (!node_id || !node_name || !system_id) {
         emitError(socket, InvalidRequestError('Invalid connection data'));
         return;
@@ -44,6 +44,7 @@ export function nodeConnect(ioc, socket, data) {
 
     try {
         const node = ioc.sc.connectNode(socket, node_id, node_name, system_id, root);
+        if (node_data) node.setData(node_data);
         socket.leave(ROOMS.SPECTATOR);
         socket.emit(EVENTS.NODE_INIT, { server_ups: UPS });
         ioc.io.to(ROOMS.SPECTATOR).emit(EVENTS.NODE_CONNECTED, { node: node });
@@ -53,8 +54,7 @@ export function nodeConnect(ioc, socket, data) {
 }
 
 export function nodeData(ioc, socket, data) {
-    const { data: node_data } = data;
-    const node_id = socket.node_id;
+    const { node_id, data: node_data } = data;
     if (!node_id || !node_data ) {
         emitError(socket, InvalidRequestError('Invalid request data'));
         return;
