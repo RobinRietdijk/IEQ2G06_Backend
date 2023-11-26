@@ -62,14 +62,14 @@ export default class System {
     }
 
     createDataPackage() {
-        const data_package = []
+        const data_package = {}
         let changed = false;
         for (const node of Object.values(this.nodes)) {
             if (!node.isRoot()) {
                 if (node.hasChanged()) changed = true;
-                data_package.push(node.getData());
+                data_package[node.id] = node.getData();
             }
         }
-        return changed, data_package;
+        return { changed: changed, data_package: data_package };
     }
 }
