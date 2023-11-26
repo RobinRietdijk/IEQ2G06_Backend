@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as the base image
-FROM node:latest
+FROM node:latest as builder
 
 # Set the working directory inside the container
 WORKDIR /src
@@ -9,6 +9,15 @@ COPY package*.json ./
 
 # Install application dependencies
 RUN npm install
+
+# Use a smaller image for running the application
+FROM node:alpine 
+
+WORKDIR /app
+
+# Copy only the necessary files from the builder stage
+COPY --from=builder /src/package*.json ./
+COPY --from=builder /src/src/ ./src/
 
 # Set the GPTAPIKEY secret as an environment variable during build
 ARG GPTAPIKEY
