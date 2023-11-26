@@ -17,7 +17,7 @@ WORKDIR /app
 
 # Copy only the necessary files from the builder stage
 COPY --from=builder /src/package*.json ./
-COPY --from=builder /src/src/ ./src/
+COPY --from=builder /src/ ./src/
 
 # Set the GPTAPIKEY secret as an environment variable during build
 ARG GPTAPIKEY
