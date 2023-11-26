@@ -19,16 +19,13 @@ WORKDIR /app
 
 # Copy only the necessary files from the builder stage
 COPY --from=builder /src/package*.json ./
-COPY --from=builder /src/ ./src/
+COPY --from=builder /src/src/ ./src/
 
 # Set the GPTAPIKEY secret as an environment variable during build
 ARG GPTAPIKEY
 ENV GPTAPIKEY=$GPTAPIKEY
 
 RUN echo "GPTAPIKEY=$GPTAPIKEY"
-
-# Copy the rest of your application files
-COPY src/ ./
 
 # Expose the port your application is running on (replace with your port)
 EXPOSE 3001
