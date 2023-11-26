@@ -68,7 +68,11 @@ export default class SystemController {
                 this.systems[system.id] = new System(system.id, system.name, system.max_nodes);
             });
         } catch (error) {
-            logger.error('Error whilst reading systems from file: ', error);
+            if (error.code === 'ENOENT') {
+                await fs.writeFile(SYSTEM_FILENAME, '{}', 'utf-8');
+            } else {
+                logger.error('Error whilst reading systems from file: ', error);
+            }
             this.systems = {};
         }
     }
