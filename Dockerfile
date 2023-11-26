@@ -10,6 +10,8 @@ COPY package*.json ./
 # Install application dependencies
 RUN npm install
 
+COPY src/ ./src/
+
 # Use a smaller image for running the application
 FROM node:alpine 
 
