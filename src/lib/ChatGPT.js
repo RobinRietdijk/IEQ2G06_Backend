@@ -25,7 +25,7 @@ export default class ChatGPT {
         }
     }
 
-    async sendMessage(id, msg) {
+    async sendMessage(msg) {
         if (!this.connected) {
             throw new Error("Unable to connect to ChatGPT, API not connected");
         }
@@ -33,8 +33,6 @@ export default class ChatGPT {
         const res = await this.api.sendMessage(msg, {
             timeoutMs: 1 * 60 * 1000
         });
-
-        res.id = id;
         
         return res;
     }

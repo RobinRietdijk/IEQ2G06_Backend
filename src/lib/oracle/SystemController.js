@@ -141,7 +141,7 @@ export default class SystemController {
                 } catch (error) {
                     logger.error(error.message);
                 } finally {
-                    delete this.systems[node.id];
+                    delete this.nodes[node.id];
                 }
             });
             delete this.systems[system_id];
