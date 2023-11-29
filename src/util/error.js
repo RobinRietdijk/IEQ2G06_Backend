@@ -1,1 +1,0 @@
-export const InvalidRequestError = (msg='Invalid request data') => `Invalid request: ${msg}`;
