@@ -27,7 +27,13 @@ export function disconnect(ioc, socket, data) {
     if (node_id) {
         try {
             const node = ioc.sc.getNode(node_id);
-            node.disconnect();
+            ioc.sc.removeNode(node.id);
+
+            if (ioc.sc.getSystem(node.system_id).size() < 1) {
+                const system = ioc.sc.removeSystem(node.system_id);
+                ioc.io.to(ROOMS.SPECTATOR).emit(EVENTS.SYSTEM_REMOVED, { system: system });
+            }
+
             ioc.io.to(ROOMS.SPECTATOR).emit(EVENTS.NODE_DISCONNECTED, { node: node });
         } catch (error) {
             emitError(socket, InvalidRequestError(error.message));
@@ -43,9 +49,14 @@ export function nodeConnect(ioc, socket, data) {
     }
 
     try {
+        socket.leave(ROOMS.SPECTATOR);
+        if (!ioc.sc.hasSystem(system_id)) {
+            const system = ioc.sc.addSystem(system_id);
+            ioc.io.to(ROOMS.SPECTATOR).emit(EVENTS.SYSTEM_CREATED, { system: system });
+        }
+
         const node = ioc.sc.connectNode(socket, node_id, node_name, system_id, root);
         if (node_data) node.setData(node_data);
-        socket.leave(ROOMS.SPECTATOR);
         socket.emit(EVENTS.NODE_INIT, { server_ups: UPS });
         ioc.io.to(ROOMS.SPECTATOR).emit(EVENTS.NODE_CONNECTED, { node: node });
     } catch (error) {

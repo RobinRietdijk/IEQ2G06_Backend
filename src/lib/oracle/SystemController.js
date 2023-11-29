@@ -35,7 +35,6 @@ export default class SystemController {
         if (!node) throw new Error(`Node: "${node_id}" does not exist`);
 
         this.systems[node.system_id].removeNode(node_id);
-        if (this.systems[node.system_id].size() < 1) delete this.systems[node.system_id];
         delete this.nodes[node_id];
 
         return node;
@@ -61,15 +60,38 @@ export default class SystemController {
         return this.systems;
     }
 
+    hasSystem(system_id) {
+        try {
+            this.getSystem(system_id);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    addSystem(system_id) {
+        if (!this.systems[system_id]) throw new Error(`System: "${system_id}" already exists`);
+        const system = new System(system_id);
+        this.systems[system_id] = system;
+        return system;
+    }
+
+    removeSystem(system_id) {
+        const system = this.systems[system_id];
+        if (!system) throw new Error(`System: "${system_id}" does not exist`);
+        delete this.systems[system_id];
+        return system;
+    }
+
     connectNode(socket, node_id, node_name, system_id, root) {
         return this.#executeWithStateBackup(() => {
             if (this.nodes[node_id]) throw new Error(`Node: "${node_id}" already exists`);
             const node = new Node(node_id, node_name, system_id, root, socket);
             this.nodes[node_id] = node;
 
-            if (!this.systems[system_id]) this.systems[system_id] = new System(system_id);
             const system = this.systems[system_id];
             system.addNode(node);
+
             return node;
         });
     }
@@ -78,15 +100,5 @@ export default class SystemController {
         return this.#executeWithStateBackup(() => {
             return this.#removeNode(node_id);
         });
-    }
-
-    cleanup() {
-        for (const [key, value] of Object.values(this.nodes)) {
-            if (!value.isConnected()) this.#removeNode(key);
-        }
-
-        for (const [key, value] of Object.values(this.systems)) {
-            if (value.size() < 1) delete this.systems[key];
-        }
     }
 }

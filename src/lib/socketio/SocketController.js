@@ -76,10 +76,22 @@ export default class SocketController {
     initCleanupLoop() {
         setInterval(() => {
             try {
-                this.sc.cleanup();
+                for (const [key, value] of Object.values(this.sc.getNodes())) {
+                    if (!value.isConnected()) {
+                        const node = this.sc.disconnectNode(key);
+                        ioc.io.to(ROOMS.SPECTATOR).emit(EVENTS.NODE_DISCONNECTED, { node: node });
+                    }
+                }
+        
+                for (const [key, value] of Object.values(this.sc.getSystems())) {
+                    if (value.size() < 1) {
+                        const system = this.sc.removeSystem(key);
+                        this.io.to(ROOMS.SPECTATOR).emit(EVENTS.SYSTEM_REMOVED, { system: system });
+                    }
+                }
             } catch (error) {
                 logger.error(error.message);
             }
-        }, 1000 * 60 * 60);
+        }, 1000 * 60 * 5);
     }
 }

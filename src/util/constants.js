@@ -16,6 +16,8 @@ export const EVENTS = {
     NODE_DISCONNECT: 'node_disconnect',
     NODE_DISCONNECTED: 'node_disconnected',
     NODE_DATA: 'node_data',
+    SYSTEM_CREATED: 'system_created',
+    SYSTEM_REMOVED: 'system_removed',
     SYSTEM_DATA: 'system_data',
     SYSTEMS_DATA: 'systems_data',
     ERROR: 'error',
