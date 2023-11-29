@@ -1,26 +1,12 @@
 export default class System {
     constructor(id, name, max_nodes = -1) {
         this.id = id;
-        this.name = name;
-        this.max_nodes = max_nodes;
-
-        this.limit = max_nodes >= 0;
         this.nodes = {};
         this.root = undefined;
     }
 
     size() {
         return Object.keys(this.nodes).length;
-    }
-
-    setName(name) {
-        this.name = name;
-    }
-
-    setMaxNodes(max_nodes) {
-        if (max_nodes >= 0 && this.size() > max_nodes) throw new Error(`System: "${this.id}" cannot set max nodes lower than current nodes in system`);
-        this.limit = max_nodes >= 0;
-        this.max_nodes = max_nodes;
     }
 
     setRoot(node) {
@@ -45,7 +31,6 @@ export default class System {
     }
 
     addNode(node) {
-        if (this.limit && this.max_nodes <= this.size()) throw new Error(`System: "${this.id}" is at max nodes`);
         if (node.isRoot()) this.setRoot(node);
         this.nodes[node.id] = node;
 

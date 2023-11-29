@@ -26,7 +26,6 @@ export default class SocketController {
         this.io = new Server(httpServer, opts);
         (async () => {
             this.sc = new SystemController();
-            this.sc.initialize();
         })();
         this.initListeners();
         this.initDataLoop();
@@ -72,5 +71,15 @@ export default class SocketController {
                 logger.error(error.message);
             }
         }, 1000 / UPS);
+    }
+
+    initCleanupLoop() {
+        setInterval(() => {
+            try {
+                this.sc.cleanup();
+            } catch (error) {
+                logger.error(error.message);
+            }
+        }, 1000 * 60 * 60);
     }
 }

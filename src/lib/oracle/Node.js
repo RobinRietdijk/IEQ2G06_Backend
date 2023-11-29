@@ -3,22 +3,21 @@ import { EVENTS } from "../../util/constants.js";
 export default class Node {
     #socket;
 
-    constructor(id, name, system_id, root=false) {
+    constructor(id, name, system_id, root=false, socket) {
         this.id = id;
         this.name = name;
         this.system_id = system_id;
         this.root = root;
         
-        this.#socket = undefined;
-        this.connected = false;
-        this.connectedSince = undefined;
+        this.#socket = socket;
+        this.connectedSince = new Date();
 
         this.data = {};
         this.changed = false;
     }
 
     isConnected() {
-        return this.connected;
+        return this.#socket.connected;
     }
 
     isRoot() {
@@ -57,27 +56,6 @@ export default class Node {
 
     hasChanged() {
         return this.changed;
-    }
-
-    connect(socket) {
-        if (this.connected) throw new Error(`Node: "${this.id} is already connected"`);
-        this.#socket = socket;
-        this.connected = true;
-        this.connectedSince = new Date();
-        this.#socket.node_id = this.id;
-    }
-
-    disconnect() {
-        if (!this.connected) throw new Error(`Node: "${this.id} is not connected"`);
-        this.#socket = undefined;
-        this.connected = false;
-        this.connectedSince = new Date();
-    }
-
-    forceDisconnect(message) {
-        if (!this.connected) throw new Error(`Node: "${this.id} is not connected"`);
-        this.#socket.emit(EVENTS.NODE_DISCONNECTED, { msg: message });
-        this.disconnect();
     }
 
     emit(event, data) {
