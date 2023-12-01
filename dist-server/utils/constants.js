@@ -3,7 +3,8 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.UPS = exports.ROUTES = exports.ROOMS = exports.EVENTS = void 0;
+exports.UPS = exports.ROUTES = exports.ROOMS = exports.NODE_ENV = exports.EVENTS = void 0;
+var NODE_ENV = exports.NODE_ENV = process.env.NODE_ENV;
 var UPS = exports.UPS = process.env.UPS || '20';
 var ROUTES = exports.ROUTES = {
   INDEX: '/',

@@ -17,7 +17,7 @@ app.use(_express["default"].urlencoded({
 }));
 app.use((0, _cookieParser["default"])());
 app.use(_express["default"]["static"]((0, _path.join)(__dirname, '../public')));
-app.use("/admin/socket-io", _express["default"]["static"]((0, _path.join)(__dirname, '../socket-admin')));
+app.use("/socket-io", _express["default"]["static"]((0, _path.join)(__dirname, '../socket-admin')));
 app.use(_morgan.requestLogger);
 app.use('/', _index["default"]);
 app.use(_morgan.responseLogger);
