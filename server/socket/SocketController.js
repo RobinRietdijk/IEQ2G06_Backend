@@ -12,7 +12,11 @@ const DEFAULT_OPTIONS = {
     },
     cors: {
         origin: '*',
-    }
+        methods: ["GET", "POST"],
+        transports: ['websocket', 'polling'],
+        credentials: true
+    },
+    allowEIO3: true
 };
 
 export default class SocketController {
