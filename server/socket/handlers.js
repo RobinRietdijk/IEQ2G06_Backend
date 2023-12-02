@@ -28,14 +28,14 @@ export function disconnect(ioc, socket, data) {
 }
 
 export function nodeConnect(ioc, socket, data) {
-    const { node_id, system_id, root, data: node_data } = data;
+    const { node_id, system_id, data: node_data } = data;
     if (!node_id || !system_id) {
         emitError(socket, InvalidRequestError('Invalid request data'));
         return;
     }
 
     let node = ioc.nodes[node_id];
-    if (!node) node = new Node(node_id, root);
+    if (!node) node = new Node(node_id);
     if (node.isConnected()) {
         emitError(socket, InvalidRequestError('Node already connected'));
         return;

@@ -3,13 +3,11 @@ export default class Node {
     #id;
     #data;
     #changed;
-    #root;
     #connectedSince;
     #disconnectedSince;
 
-    constructor(id, root) {
+    constructor(id) {
         this.#id = id;
-        this.#root = root;
 
         this.#data = null;
         this.#changed = false;
@@ -28,10 +26,6 @@ export default class Node {
     isConnected() {
         if (!this.#socket) return false;
         return this.#socket.connected;
-    }
-
-    isRoot() {
-        return this.#root;
     }
 
     setData(data) {
