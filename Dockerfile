@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as the base image
-FROM amd64/node:latest AS builder
+FROM node:latest AS builder
 
 # Set the working directory inside the container
 WORKDIR /src
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Use a smaller image for running the application
-FROM amd64/node:alpine 
+FROM node:latest 
 
 WORKDIR /app
 

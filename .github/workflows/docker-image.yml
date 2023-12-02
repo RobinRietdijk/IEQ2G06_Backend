@@ -13,10 +13,6 @@ jobs:
     env:
       REPO: ${{ github.repository }}
 
-    strategy:
-      matrix:
-        platform: [amd64, arm64v8, arm32v7]
-
     steps:
     - name: Build the Docker image
       uses: actions/checkout@v4
@@ -43,8 +39,9 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./Dockerfile.${{ matrix.platform }}
+        file: ./Dockerfile
+        platforms: linux/amd64,linux/arm64,linux/arm
         push: true
-        tags: ghcr.io/${{ env.REPO_LOWER }}:${{ env.COMMIT_HASH }}-${{ matrix.platform }},ghcr.io/${{ env.REPO_LOWER }}:latest-${{ matrix.platform }}
+        tags: ghcr.io/${{ env.REPO_LOWER }}:${{ env.COMMIT_HASH }},ghcr.io/${{ env.REPO_LOWER }}:latest
         build-args: | 
           "GPTAPIKEY=${{ secrets.GPT_KEY }}"
