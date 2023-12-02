@@ -27,8 +27,8 @@ COPY --from=builder /src/dist/ ./dist
 COPY --from=builder /src/public/ ./public
 COPY --from=builder /src/socket-admin/ ./socket-admin
 
-# Install only production dependencies
-RUN npm install --only=production
+# Install dependencies
+RUN npm install
 
 # Set the GPTAPIKEY secret as an environment variable during build
 ARG GPTAPIKEY
