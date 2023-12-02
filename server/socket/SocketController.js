@@ -2,7 +2,7 @@ import { Server } from "socket.io"
 import { NODE_ENV, EVENTS, UPS } from "../utils/constants";
 import { instrument } from "@socket.io/admin-ui";
 import { appLogger as logger } from "../utils/logger";
-import handlers from "./handlers";
+import { connection, disconnect, nodeConnect, nodeData } from "./handlers";
 
 const DEFAULT_OPTIONS = {
     connectionStateRecovery: {
@@ -53,10 +53,10 @@ export default class SocketController {
 
     #initListeners() {
         this.io.on(EVENTS.CONNECTION, (socket) => {
-            handlers.connection(this, socket, {});
-            socket.on(EVENTS.DISCONNECT, (data) => handlers.disconnect(this, socket, data));
-            socket.on(EVENTS.NODE_CONNECT, (data) => handlers.nodeConnect(this, socket, data));
-            socket.on(EVENTS.NODE_DATA, (data) => handlers.nodeData(this, socket, data));
+            connection(this, socket, {});
+            socket.on(EVENTS.DISCONNECT, (data) => disconnect(this, socket, data));
+            socket.on(EVENTS.NODE_CONNECT, (data) => nodeConnect(this, socket, data));
+            socket.on(EVENTS.NODE_DATA, (data) => nodeData(this, socket, data));
         });
     }
 
