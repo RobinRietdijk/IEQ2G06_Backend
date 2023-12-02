@@ -8,7 +8,7 @@ WORKDIR /src
 COPY package*.json ./
 
 # Install application dependencies
-RUN npm install
+RUN npm install --verbose
 
 # Copy the source code to the working directory
 COPY . .
@@ -28,7 +28,7 @@ COPY --from=builder /src/public/ ./public
 COPY --from=builder /src/socket-admin/ ./socket-admin
 
 # Install dependencies
-RUN npm install
+RUN npm install --verbose
 
 # Set the GPTAPIKEY secret as an environment variable during build
 ARG GPTAPIKEY
