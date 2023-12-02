@@ -1,8 +1,8 @@
 # Use an official Node.js runtime as the base image
-FROM node:latest as builder
+FROM node:latest
 
 # Set the working directory inside the container
-WORKDIR /src
+WORKDIR /app
 
 # Copy package.json and package-lock.json to the container
 COPY package*.json ./
