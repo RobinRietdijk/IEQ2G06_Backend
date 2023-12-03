@@ -23,7 +23,7 @@
     "start": "npm run server",
     "build": "npm-run-all clean transpile",
     "server": "node ./dist/bin/www",
-    "dev": "NODE_ENV=development npm-run-all build server",
+    "dev": "NODE_ENV=development npm-run-all build server --HOST=0.0.0.0",
     "transpile": "babel ./server --out-dir dist",
     "clean": "rimraf dist",
     "watch:dev": "nodemon"
