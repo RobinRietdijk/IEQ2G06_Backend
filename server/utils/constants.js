@@ -4,6 +4,7 @@ export const UPS = process.env.UPS || '20';
 export const ROUTES = {
     INDEX: '/',
     FORMAT: '/format',
+    GPT: '/gpt'
 }
 
 export const EVENTS = {
