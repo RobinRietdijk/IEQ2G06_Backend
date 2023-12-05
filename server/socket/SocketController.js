@@ -4,9 +4,10 @@ import { instrument } from "@socket.io/admin-ui";
 import { appLogger as logger } from "../utils/logger";
 import { connection, disconnect, nodeConnect, nodeData } from "./handlers";
 
+const MAX_DISCONNECT_DURATION = 2 * 60 * 1000
 const DEFAULT_OPTIONS = {
     connectionStateRecovery: {
-        maxDisconnectionDuration: 2 * 60 * 1000,
+        maxDisconnectionDuration: MAX_DISCONNECT_DURATION,
         skipMiddlewares: true,
         credentials: true,
     },
@@ -37,9 +38,10 @@ export default class SocketController {
 
         this.#initListeners();
         this.#initDataLoop();
+        this.#initCleanupLoop();
         this.connections = 0;
         this.node_clients = {};
-        this.nodes = {};
+        this.disconnected_node_clients = {};
     }
 
     isInitialized() {
@@ -81,6 +83,20 @@ export default class SocketController {
         if (changed) this.emitTo(room, EVENTS.SYSTEM_DATA, { system_data: systemPackage })
     }
 
+    #cleanup() {
+        const now = new Date().getTime()
+        for (const [key, value] of Object.entries(this.disconnected_node_clients)) {
+            try {
+                const disconnectedSince = value.getDisconnectedSince()
+                if (disconnectedSince - now > MAX_DISCONNECT_DURATION) {
+                    delete this.disconnected_node_clients[key];
+                }
+            } catch (error) {
+                logger.warn(error);
+            }            
+        }
+    }
+
     #initDataLoop() {
         setInterval(() => {
             try {
@@ -89,5 +105,15 @@ export default class SocketController {
                 logger.error(error);
             }
         }, 1000 / UPS);
+    }
+
+    #initCleanupLoop() {
+        setInterval(() => {
+            try {
+                this.#cleanup();
+            } catch (error) {
+                logger.error(error);
+            }
+        }, MAX_DISCONNECT_DURATION)
     }
 }

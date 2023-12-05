@@ -23,6 +23,7 @@ export function disconnect(ioc, socket, data) {
     if (ioc.node_clients[socket.id]) {
         const node = ioc.node_clients[socket.id];
         node.disconnect();
+        ioc.disconnected_node_clients[socket.id] = node;
         delete ioc.node_clients[socket.id];
     }
 }
@@ -34,8 +35,9 @@ export function nodeConnect(ioc, socket, data) {
         return;
     }
 
-    let node = ioc.nodes[node_id];
+    let node = ioc.disconnected_node_clients[socket.id];
     if (!node) node = new Node(node_id);
+    else delete ioc.disconnected_node_clients[socket.id];
     if (node.isConnected()) {
         emitError(socket, InvalidRequestError('Node already connected'));
         return;

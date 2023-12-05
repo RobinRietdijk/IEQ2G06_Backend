@@ -44,14 +44,14 @@ export default class Node {
     
     connect(socket) {
         this.#socket = socket;
-        this.#connectedSince = new Date();
+        this.#connectedSince = new Date().getTime();
         this.#disconnectedSince = null;
     }
 
     disconnect() {
         this.#socket = null;
         this.#connectedSince = null;
-        this.#disconnectedSince = new Date();
+        this.#disconnectedSince = new Date().getTime();
     }
 
     getConnectedSince() {
