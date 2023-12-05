@@ -3,14 +3,7 @@ export const UPS = process.env.UPS || '20';
 
 export const ROUTES = {
     INDEX: '/',
-    LOGIN: '/login',
-    GPT: '/gpt',
-    ADMIN: '/admin',
-    NODES: '/nodes',
-    NODE: '/node',
-    SYSTEMS: '/systems',
-    SYSTEM: '/system',
-    REFRESH: '/refresh',
+    FORMAT: '/format',
 }
 
 export const EVENTS = {

@@ -2,6 +2,7 @@ import express from 'express';
 import { ROUTES } from '../utils/constants';
 import { appLogger as logger } from '../utils/logger';
 import indexHandler from './handler';
+import formatHandler from './format/handler';
 const router = express.Router();
 
 const errorHandler = (error, req, res, next) => {
@@ -11,6 +12,8 @@ const errorHandler = (error, req, res, next) => {
 
 router.route(ROUTES.INDEX)
     .get(indexHandler.GET);
-
+router.route(ROUTES.FORMAT)
+    .get(formatHandler.GET)
+    .post(formatHandler.POST);
 router.use(errorHandler);
 export default router;
