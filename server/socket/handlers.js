@@ -53,7 +53,7 @@ export function nodeConnect(ioc, socket, data) {
 }
 
 export function nodeData(ioc, socket, data) {
-    const { data: node_data } = data;
+    const { node_data } = data;
     if (!node_data ) {
         emitError(socket, InvalidRequestError('Invalid request data'));
         return;
