@@ -1,6 +1,7 @@
 import { emitError, trimSocket } from "./utils";
 import { socketioLogger as logger } from "../utils/logger";
 import { EVENTS, UPS } from "../utils/constants";
+import { InternalServerError } from "../utils/error";
 
 export function connection(ioc, socket, data) {
     logger.info('Connected', JSON.parse(trimSocket(socket)));
@@ -21,6 +22,10 @@ export function disconnect(ioc, socket, data) {
 
     const node = ioc.getNode(socket.id);
     if (node) node.disconnect();
+    else {
+        emitError(socket, InvalidRequestError('Node is not connected'));
+        return;
+    }
 }
 
 export function nodeConnect(ioc, socket, data) {
@@ -31,9 +36,7 @@ export function nodeConnect(ioc, socket, data) {
     }
 
     let system = ioc.getSystem(system_id);
-    if (!system) {
-        system = ioc.createSystem(system_id);
-    }
+    if (!system) system = ioc.createSystem(system_id);
 
     let node = system.getNode(socket.id);
     if (!node) node = system.createNode(socket.id, node_id);
@@ -56,6 +59,10 @@ export function nodeData(ioc, socket, data) {
 
     const node = ioc.getNode(socket.id);
     if (node) node.setData(node_data);
+    else {
+        emitError(socket, InvalidRequestError('Node does not exist, register the node before sending data'));
+        return;
+    }
 }
 
 export async function gptPrompt(ioc, socket, data) {
@@ -65,11 +72,25 @@ export async function gptPrompt(ioc, socket, data) {
         return;
     }
 
+    const node = ioc.getNode(socket.id);
+    if (!node) {
+        emitError(socket, InvalidRequestError('Node does not exist, register the node before sending data'));
+        return;
+    }
     const system = ioc.getSystemFromSocket(socket.id);
-    system.emit(EVENTS.SYSTEM_PROMPTING);
-    const answer = await ioc.chatGPT.sendMessage(message);
-    socket.emit(EVENTS.GPT_ANSWER, { 'message': answer });
-    system.emit(EVENTS.SYSTEM_FINISHED_PROMPTING);
+    if (!system) {
+        emitError(socket, InternalServerError('Node is not connected to a system'));
+    }
+
+    try {
+        system.emit(EVENTS.SYSTEM_PROMPTING);
+        const answer = await ioc.chatGPT.sendMessage(message);
+        socket.emit(EVENTS.GPT_ANSWER, { 'message': answer });
+        system.emit(EVENTS.SYSTEM_FINISHED_PROMPTING);
+    } catch (error) {
+        emitError(socket, InternalServerError(error));
+        logger.error(error);
+    }
 }
 
 export function print(ioc, socket, data) {
