@@ -1,6 +1,5 @@
 import { emitError, trimSocket } from "./utils";
 import { socketioLogger as logger } from "../utils/logger";
-import Node from "./Node";
 import { EVENTS, UPS } from "../utils/constants";
 
 export function connection(ioc, socket, data) {
@@ -20,12 +19,8 @@ export function disconnect(ioc, socket, data) {
     logger.info('Disconnected', JSON.parse(trimSocket(socket, { reason: data })))
     ioc.connections -= 1;
 
-    if (ioc.node_clients[socket.id]) {
-        const node = ioc.node_clients[socket.id];
-        node.disconnect();
-        ioc.disconnected_node_clients[socket.id] = node;
-        delete ioc.node_clients[socket.id];
-    }
+    const node = ioc.getNode(socket.id);
+    if (node) node.disconnect();
 }
 
 export function nodeConnect(ioc, socket, data) {
@@ -35,29 +30,54 @@ export function nodeConnect(ioc, socket, data) {
         return;
     }
 
-    let node = ioc.disconnected_node_clients[socket.id];
-    if (!node) node = new Node(node_id);
-    else delete ioc.disconnected_node_clients[socket.id];
+    let system = ioc.getSystem(system_id);
+    if (!system) {
+        system = ioc.createSystem(system_id);
+    }
+
+    let node = system.getNode(socket.id);
+    if (!node) node = system.createNode(socket.id, node_id);
+
     if (node.isConnected()) {
         emitError(socket, InvalidRequestError('Node already connected'));
         return;
     }
 
-    node.connect(socket);
-    node.setData(node_data);
-    
-    ioc.node_clients[socket.id] = node;
-    socket.join(system_id);
-
+    system.connectNode(socket, node_data);
     socket.emit(EVENTS.NODE_CONNECTED, { server_ups: UPS });
 }
 
 export function nodeData(ioc, socket, data) {
     const { node_data } = data;
-    if (!node_data ) {
+    if (!node_data) {
         emitError(socket, InvalidRequestError('Invalid request data'));
         return;
     }
 
-    ioc.node_clients[socket.id].setData(node_data);
+    const node = ioc.getNode(socket.id);
+    if (node) node.setData(node_data);
+}
+
+export async function gptPrompt(ioc, socket, data) {
+    const { message } = data;
+    if (!message) {
+        emitError(socket, InvalidRequestError('Invalid request data'));
+        return;
+    }
+
+    const system = ioc.getSystemFromSocket(socket.id);
+    system.emit(EVENTS.SYSTEM_PROMPTING);
+    const answer = await ioc.chatGPT.sendMessage(message);
+    socket.emit(EVENTS.GPT_ANSWER, { 'message': answer });
+    system.emit(EVENTS.SYSTEM_FINISHED_PROMPTING);
+}
+
+export function print(ioc, socket, data) {
+    const { print_data } = data;
+    if (!print_data) {
+        emitError(socket, InvalidRequestError('Invalid request data'));
+        return;
+    }
+
+    const system = ioc.getSystemFromSocket(socket.id);
 }
