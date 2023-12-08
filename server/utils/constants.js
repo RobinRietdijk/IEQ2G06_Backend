@@ -1,5 +1,5 @@
 export const NODE_ENV = process.env.NODE_ENV;
-export const UPS = process.env.UPS || '20';
+export const UPS = process.env.UPS || '1';
 
 export const ROUTES = {
     INDEX: '/',
