@@ -2,7 +2,7 @@ import { Server } from "socket.io"
 import { NODE_ENV, EVENTS, UPS } from "../utils/constants";
 import { instrument } from "@socket.io/admin-ui";
 import { appLogger as logger } from "../utils/logger";
-import { connection, disconnect, gptPrompt, nodeConnect, nodeData, print } from "./handlers";
+import { conclude, connection, disconnect, nodeConnect, nodeData } from "./handlers";
 import System from "./System";
 import ChatGPT from "../utils/ChatGPT";
 
@@ -90,8 +90,7 @@ export default class SocketController {
             socket.on(EVENTS.DISCONNECT, (data) => disconnect(this, socket, data));
             socket.on(EVENTS.NODE_CONNECT, (data) => nodeConnect(this, socket, data));
             socket.on(EVENTS.NODE_DATA, (data) => nodeData(this, socket, data));
-            socket.on(EVENTS.GPT_PROMPT, (data) => gptPrompt(this, socket, data));
-            socket.on(EVENTS.PRINT, (data) => print(this, socket, data));
+            socket.on(EVENTS.CONCLUDE, (data) => conclude(this, socket, data));
         });
     }
 

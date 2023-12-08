@@ -15,11 +15,9 @@ export const EVENTS = {
     SYSTEM_DATA: 'system_data',
     SYSTEM_IDLE: 'system_idle',
     SYSTEM_ACTIVE: 'system_active',
+    CONCLUDE: 'conclude',
     SYSTEM_PROMPTING: 'system_prompting',
     SYSTEM_FINISHED_PROMPTING: 'system_finished_prompting',
-    GPT_PROMPT: 'gpt_prompt',
-    GPT_ANSWER: 'gpt_answer',
-    PRINT: 'print',
     ERROR: 'error',
 }
 

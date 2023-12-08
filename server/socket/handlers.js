@@ -65,7 +65,7 @@ export function nodeData(ioc, socket, data) {
     }
 }
 
-export async function gptPrompt(ioc, socket, data) {
+export async function conclude(ioc, socket, data) {
     const { message } = data;
     if (!message) {
         emitError(socket, InvalidRequestError('Invalid request data'));
@@ -85,20 +85,10 @@ export async function gptPrompt(ioc, socket, data) {
     try {
         system.emit(EVENTS.SYSTEM_PROMPTING);
         const answer = await ioc.chatGPT.sendMessage(message);
-        socket.emit(EVENTS.GPT_ANSWER, { 'message': answer });
         system.emit(EVENTS.SYSTEM_FINISHED_PROMPTING);
+        console.log(answer)
     } catch (error) {
         emitError(socket, InternalServerError(error));
         logger.error(error);
     }
-}
-
-export function print(ioc, socket, data) {
-    const { print_data } = data;
-    if (!print_data) {
-        emitError(socket, InvalidRequestError('Invalid request data'));
-        return;
-    }
-
-    const system = ioc.getSystemFromSocket(socket.id);
 }
