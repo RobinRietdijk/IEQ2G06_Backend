@@ -13,11 +13,8 @@ export const EVENTS = {
     NODE_CONNECTED: 'node_connected',
     NODE_DATA: 'node_data',
     SYSTEM_DATA: 'system_data',
-    SYSTEM_IDLE: 'system_idle',
-    SYSTEM_ACTIVE: 'system_active',
+    SYSTEM_STATE: 'system_state',
     CONCLUDE: 'conclude',
-    SYSTEM_PROMPTING: 'system_prompting',
-    SYSTEM_FINISHED_PROMPTING: 'system_finished_prompting',
     ERROR: 'error',
 }
 

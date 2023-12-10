@@ -52,7 +52,7 @@ export default class System {
         this.#last_update = new Date().getTime();
         if (this.#idle) {
             this.#idle = false;
-            this.emit(EVENTS.SYSTEM_ACTIVE);
+            this.emit(EVENTS.SYSTEM_STATE, { state: "active" });
         }
         this.#nodes[socket.id].setData(node_data);
     }
@@ -75,7 +75,7 @@ export default class System {
             const now = new Date().getTime();
             if (!this.#idle && now - this.#last_update > timeout) {
                 this.#idle = true;
-                this.#io.emit(EVENTS.SYSTEM_IDLE);
+                this.emit(EVENTS.SYSTEM_STATE, { state: "idle" });
             }
         }
     }
