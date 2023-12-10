@@ -14,7 +14,7 @@ export const EVENTS = {
     NODE_DATA: 'node_data',
     SYSTEM_DATA: 'system_data',
     SYSTEM_STATE: 'system_state',
-    CONCLUDE: 'conclude',
+    SYSTEM_CONCLUDE: 'system_conclude',
     ERROR: 'error',
 }
 

@@ -65,7 +65,7 @@ export function nodeData(ioc, socket, data) {
     }
 }
 
-export async function conclude(ioc, socket, data) {
+export async function systemConclude(ioc, socket, data) {
     const { message } = data;
     if (!message) {
         emitError(socket, InvalidRequestError('Invalid request data'));

@@ -90,7 +90,7 @@ export default class SocketController {
             socket.on(EVENTS.DISCONNECT, (data) => disconnect(this, socket, data));
             socket.on(EVENTS.NODE_CONNECT, (data) => nodeConnect(this, socket, data));
             socket.on(EVENTS.NODE_DATA, (data) => nodeData(this, socket, data));
-            socket.on(EVENTS.CONCLUDE, (data) => conclude(this, socket, data));
+            socket.on(EVENTS.SYSTEM_CONCLUDE, (data) => conclude(this, socket, data));
         });
     }
 
