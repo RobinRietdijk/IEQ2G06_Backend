@@ -21,3 +21,10 @@ export const EVENTS = {
 export const ROOMS = {
     SPECTATOR: 'spectator'
 }
+
+export const STATES = {
+    IDLE: 'idle',
+    ACTIVE: 'active',
+    PROMPTING: 'prompting',
+    FIN_PROMPTING: 'finished_prompting'
+}

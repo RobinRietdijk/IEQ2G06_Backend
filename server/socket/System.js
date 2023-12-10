@@ -1,4 +1,4 @@
-import { EVENTS } from "../utils/constants";
+import { EVENTS, STATES } from "../utils/constants";
 import Node from "./Node";
 
 export default class System {
@@ -6,14 +6,14 @@ export default class System {
     #system_id
     #nodes
     #last_update
-    #idle
+    #state
 
     constructor(io, system_id) {
         this.#io = io
         this.#system_id = system_id;
         this.#nodes = {};
         this.#last_update = new Date(0).getTime();
-        this.#idle = true;
+        this.#state = STATES.IDLE;
     }
 
     size() {
@@ -36,6 +36,15 @@ export default class System {
         return this.#nodes;
     }
 
+    getState() {
+        return this.#state
+    }
+
+    setState(state) {
+        this.#state = state
+        this.emit(EVENTS.SYSTEM_STATE, { state: state });
+    }
+
     createNode(socket_id, node_id) {
         this.#nodes[socket_id] = new Node(node_id);
         return this.#nodes[socket_id];
@@ -50,9 +59,8 @@ export default class System {
 
     updateNodeData(socket, node_data) {
         this.#last_update = new Date().getTime();
-        if (this.#idle) {
-            this.#idle = false;
-            this.emit(EVENTS.SYSTEM_STATE, { state: "active" });
+        if (this.#state === STATES.IDLE) {
+            this.setState(STATES.ACTIVE);
         }
         this.#nodes[socket.id].setData(node_data);
     }
@@ -71,11 +79,10 @@ export default class System {
     }
     
     idleLoop(timeout) {
-        if (!this.#idle) {
+        if (this.#state !== STATES.IDLE) {
             const now = new Date().getTime();
-            if (!this.#idle && now - this.#last_update > timeout) {
-                this.#idle = true;
-                this.emit(EVENTS.SYSTEM_STATE, { state: "idle" });
+            if (now - this.#last_update > timeout) {
+                this.setState(STATES.IDLE);
             }
         }
     }

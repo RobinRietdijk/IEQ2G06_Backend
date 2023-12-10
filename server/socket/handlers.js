@@ -1,6 +1,6 @@
 import { emitError, trimSocket } from "./utils";
 import { socketioLogger as logger } from "../utils/logger";
-import { EVENTS, UPS } from "../utils/constants";
+import { EVENTS, STATES, UPS } from "../utils/constants";
 import { InternalServerError } from "../utils/error";
 
 export function connection(ioc, socket, data) {
@@ -47,7 +47,7 @@ export function nodeConnect(ioc, socket, data) {
     }
 
     system.connectNode(socket, node_data);
-    socket.emit(EVENTS.NODE_CONNECTED, { server_ups: UPS });
+    socket.emit(EVENTS.NODE_CONNECTED, { server_ups: UPS, state: system.getState() });
 }
 
 export function nodeData(ioc, socket, data) {
@@ -83,9 +83,9 @@ export async function conclude(ioc, socket, data) {
     }
 
     try {
-        system.emit(EVENTS.SYSTEM_STATE, { state: "prompting" });
+        system.setState(STATES.PROMPTING);
         const answer = await ioc.chatGPT.sendMessage(message);
-        system.emit(EVENTS.SYSTEM_STATE, { state: "finished prompting" });
+        system.setState(STATES.FIN_PROMPTING);
         console.log(answer)
     } catch (error) {
         emitError(socket, InternalServerError(error));
