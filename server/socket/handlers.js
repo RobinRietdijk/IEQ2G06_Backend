@@ -1,7 +1,7 @@
 import { emitError, trimSocket } from "./utils";
 import { socketioLogger as logger } from "../utils/logger";
-import Node from "./Node";
-import { EVENTS, UPS } from "../utils/constants";
+import { EVENTS, STATES, UPS } from "../utils/constants";
+import { InternalServerError } from "../utils/error";
 
 export function connection(ioc, socket, data) {
     logger.info('Connected', JSON.parse(trimSocket(socket)));
@@ -20,11 +20,11 @@ export function disconnect(ioc, socket, data) {
     logger.info('Disconnected', JSON.parse(trimSocket(socket, { reason: data })))
     ioc.connections -= 1;
 
-    if (ioc.node_clients[socket.id]) {
-        const node = ioc.node_clients[socket.id];
-        node.disconnect();
-        ioc.disconnected_node_clients[socket.id] = node;
-        delete ioc.node_clients[socket.id];
+    const node = ioc.getNode(socket.id);
+    if (node) node.disconnect();
+    else {
+        emitError(socket, InvalidRequestError('Node is not connected'));
+        return;
     }
 }
 
@@ -35,29 +35,60 @@ export function nodeConnect(ioc, socket, data) {
         return;
     }
 
-    let node = ioc.disconnected_node_clients[socket.id];
-    if (!node) node = new Node(node_id);
-    else delete ioc.disconnected_node_clients[socket.id];
+    let system = ioc.getSystem(system_id);
+    if (!system) system = ioc.createSystem(system_id);
+
+    let node = system.getNode(socket.id);
+    if (!node) node = system.createNode(socket.id, node_id);
+
     if (node.isConnected()) {
         emitError(socket, InvalidRequestError('Node already connected'));
         return;
     }
 
-    node.connect(socket);
-    node.setData(node_data);
-    
-    ioc.node_clients[socket.id] = node;
-    socket.join(system_id);
-
-    socket.emit(EVENTS.NODE_CONNECTED, { server_ups: UPS });
+    system.connectNode(socket, node_data);
+    socket.emit(EVENTS.NODE_CONNECTED, { server_ups: UPS, state: system.getState() });
 }
 
 export function nodeData(ioc, socket, data) {
     const { node_data } = data;
-    if (!node_data ) {
+    if (!node_data) {
         emitError(socket, InvalidRequestError('Invalid request data'));
         return;
     }
 
-    ioc.node_clients[socket.id].setData(node_data);
+    const node = ioc.getNode(socket.id);
+    if (node) node.setData(node_data);
+    else {
+        emitError(socket, InvalidRequestError('Node does not exist, register the node before sending data'));
+        return;
+    }
+}
+
+export async function systemConclude(ioc, socket, data) {
+    const { message } = data;
+    if (!message) {
+        emitError(socket, InvalidRequestError('Invalid request data'));
+        return;
+    }
+
+    const node = ioc.getNode(socket.id);
+    if (!node) {
+        emitError(socket, InvalidRequestError('Node does not exist, register the node before sending data'));
+        return;
+    }
+    const system = ioc.getSystemFromSocket(socket.id);
+    if (!system) {
+        emitError(socket, InternalServerError('Node is not connected to a system'));
+    }
+
+    try {
+        system.setState(STATES.PROMPTING);
+        const answer = await ioc.chatGPT.sendMessage(message);
+        system.setState(STATES.FIN_PROMPTING);
+        console.log(answer)
+    } catch (error) {
+        emitError(socket, InternalServerError(error));
+        logger.error(error);
+    }
 }

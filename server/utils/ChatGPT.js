@@ -1,4 +1,4 @@
-import { appLogger as logger } from '../../utils/logger.js';
+import { appLogger as logger } from './logger.js';
 
 export default class ChatGPT {
     #connected
@@ -38,7 +38,7 @@ export default class ChatGPT {
         const res = await this.api.sendMessage(msg, {
             timeoutMs: 1 * 60 * 1000
         });
-        
+
         return res;
     }
 }

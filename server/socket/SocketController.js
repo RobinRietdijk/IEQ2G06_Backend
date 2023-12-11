@@ -2,9 +2,12 @@ import { Server } from "socket.io"
 import { NODE_ENV, EVENTS, UPS } from "../utils/constants";
 import { instrument } from "@socket.io/admin-ui";
 import { appLogger as logger } from "../utils/logger";
-import { connection, disconnect, nodeConnect, nodeData } from "./handlers";
+import { conclude, connection, disconnect, nodeConnect, nodeData } from "./handlers";
+import System from "./System";
+import ChatGPT from "../utils/ChatGPT";
 
 const MAX_DISCONNECT_DURATION = 2 * 60 * 1000
+const IDLE_TIMEOUT = 1 * 60 * 1000;
 const DEFAULT_OPTIONS = {
     connectionStateRecovery: {
         maxDisconnectionDuration: MAX_DISCONNECT_DURATION,
@@ -22,6 +25,8 @@ const DEFAULT_OPTIONS = {
 
 export default class SocketController {
     static #instance;
+    #systems;
+
     constructor() {
         if (!SocketController.#instance) SocketController.#instance = this;
         return SocketController.#instance;
@@ -36,12 +41,13 @@ export default class SocketController {
             mode: NODE_ENV,
         });
 
+        this.chatGPT = new ChatGPT();
         this.#initListeners();
         this.#initDataLoop();
         this.#initCleanupLoop();
+        this.#initIdleLoop();
         this.connections = 0;
-        this.node_clients = {};
-        this.disconnected_node_clients = {};
+        this.#systems = {};
     }
 
     isInitialized() {
@@ -53,57 +59,45 @@ export default class SocketController {
         this.io.to(room).emit(event, data);
     }
 
+    getSystem(system_id) {
+        return this.#systems[system_id];
+    }
+
+    getSystemFromSocket(socket_id) {
+        for (const [key, system] of Object.entries(this.#systems)) {
+            const node = system.getNode(socket_id);
+            if (node) return this.#systems[key];
+        }
+        throw new Error("Cannot find system from socket id");
+    }
+
+    createSystem(system_id) {
+        this.#systems[system_id] = new System(this.io, system_id);
+        return this.#systems[system_id];
+    }
+
+    getNode(socket_id) {
+        for (const system of Object.values(this.#systems)) {
+            const node = system.getNode(socket_id);
+            if (node) return node;
+        }
+        throw new Error("Cannot find node from socket id");
+    }
+
     #initListeners() {
         this.io.on(EVENTS.CONNECTION, (socket) => {
             connection(this, socket, {});
             socket.on(EVENTS.DISCONNECT, (data) => disconnect(this, socket, data));
             socket.on(EVENTS.NODE_CONNECT, (data) => nodeConnect(this, socket, data));
             socket.on(EVENTS.NODE_DATA, (data) => nodeData(this, socket, data));
+            socket.on(EVENTS.SYSTEM_CONCLUDE, (data) => conclude(this, socket, data));
         });
-    }
-
-    #checkChangedData() {
-        const rooms = this.io.sockets.adapter.rooms;
-        for (const [room, sockets] of rooms.entries()) {
-            if (sockets.size > 1 || (sockets.size === 1 && [...sockets][0] !== room)) {
-                this.#checkRoomChangedData(room);
-            }
-        }
-    }
-
-    #checkRoomChangedData(room) {
-        const socketsInRoom = [...this.io.sockets.adapter.rooms.get(room)];
-        const systemPackage = {};
-        let changed = false;
-        for (const socketId of socketsInRoom) {
-            const node = this.node_clients[socketId];
-            if (node) {
-                if (node.hasChanged()) changed = true;
-                systemPackage[node.getId()] = node.getData();
-            }
-        }
-
-        if (changed) this.emitTo(room, EVENTS.SYSTEM_DATA, { system_data: systemPackage })
-    }
-
-    #cleanup() {
-        const now = new Date().getTime()
-        for (const [key, value] of Object.entries(this.disconnected_node_clients)) {
-            try {
-                const disconnectedSince = value.getDisconnectedSince()
-                if (disconnectedSince - now > MAX_DISCONNECT_DURATION) {
-                    delete this.disconnected_node_clients[key];
-                }
-            } catch (error) {
-                logger.warn(error);
-            }
-        }
     }
 
     #initDataLoop() {
         setInterval(() => {
             try {
-                this.#checkChangedData();
+                for (const system of Object.values(this.#systems)) system.dataLoop();
             } catch (error) {
                 logger.error(error);
             }
@@ -113,10 +107,25 @@ export default class SocketController {
     #initCleanupLoop() {
         setInterval(() => {
             try {
-                this.#cleanup();
+                for (const [key, system] of Object.entries(this.#systems)) {
+                    system.cleanupLoop(MAX_DISCONNECT_DURATION);
+                    if (system.size() < 1) delete this.#systems[key];
+                }
             } catch (error) {
                 logger.error(error);
             }
-        }, MAX_DISCONNECT_DURATION)
+        }, MAX_DISCONNECT_DURATION);
+    }
+
+    #initIdleLoop() {
+        setInterval(() => {
+            try {
+                for (const system of Object.values(this.#systems)) {
+                    system.idleLoop(IDLE_TIMEOUT);
+                }
+            } catch (error) {
+                logger.error(error);
+            }
+        }, IDLE_TIMEOUT);
     }
 }
