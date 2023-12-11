@@ -1,27 +1,59 @@
 {
-  "name": "ieq2g06_backend",
-  "version": "1.0.0",
-  "type": "module",
-  "description": "IEQ2G06 Backend",
-  "main": "index.js",
-  "scripts": {
-    "dev": "nodemon src/app.js",
-    "start": "node src/app.js"
+  "name": "test",
+  "version": "0.0.0",
+  "private": true,
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "exclude": [
+            "proposal-dynamic-import"
+          ]
+        }
+      ]
+    ]
   },
-  "author": "R.J. Rietdijk",
-  "license": "ISC",
+  "nodemonConfig": {
+    "exec": "npm run dev",
+    "watch": [
+      "server/*",
+      "public/*"
+    ],
+    "ignore": [
+      "**/__tests__/**",
+      "*.test.js",
+      "*.spec.js"
+    ]
+  },
+  "scripts": {
+    "start": "npm run server",
+    "build": "npm-run-all clean transpile",
+    "server": "node ./dist/bin/www",
+    "dev": "NODE_ENV=development npm-run-all build server --HOST=0.0.0.0",
+    "transpile": "babel ./server --out-dir dist",
+    "clean": "rimraf dist",
+    "watch:dev": "nodemon"
+  },
   "dependencies": {
-    "bcrypt": "^5.1.1",
-    "callsite": "^1.0.0",
-    "chalk": "^5.3.0",
+    "@babel/cli": "^7.23.4",
+    "@babel/core": "^7.23.5",
+    "@babel/preset-env": "^7.23.5",
+    "@socket.io/admin-ui": "^0.5.1",
+    "0g": "^0.0.9",
+    "chalk": "^4.1.2",
     "chatgpt": "^5.2.5",
+    "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
+    "debug": "~2.6.9",
+    "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "hex-color-to-color-name": "^1.0.2",
     "http": "^0.0.1-security",
-    "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0",
+    "morgan": "~1.9.1",
     "nodemon": "^3.0.1",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.5",
     "socket.io": "^4.7.2",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1"

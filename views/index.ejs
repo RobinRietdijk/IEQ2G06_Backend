@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poem</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/card.css">
+</head>
+
+<body>
+    <div class="card__wrapper">
+        <div class="card__container">
+
+            <div class="color__container">
+                <div class="color__name">
+                    <span></span>
+                </div>
+                <div class="color__hex">
+                    <span></span>
+                </div>
+            </div>
+
+            <div class="poem__container">
+                <div class="poem__inner">
+                    <span class="poem__text">
+                    </span>
+                </div>
+            </div>
+
+            <div class="title__container">
+                <div class="title__text">
+                    <span>DELPHI</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const color_encoded = '<%= color %>';
+        const poem_encoded = '<%= poem %>';
+    </script>
+    <script type="module" src="/js/index.js" defer></script>
+</body>
+
+</html>
