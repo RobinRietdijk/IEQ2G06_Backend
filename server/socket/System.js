@@ -81,7 +81,7 @@ export default class System {
     idleLoop(timeout) {
         if (this.#state !== STATES.IDLE) {
             const now = new Date().getTime();
-            if (now - this.#last_update > timeout) {
+            if (this.#state == STATES.ACTIVE && now - this.#last_update > timeout) {
                 this.setState(STATES.IDLE);
             }
         }

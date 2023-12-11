@@ -1,5 +1,6 @@
 export const NODE_ENV = process.env.NODE_ENV;
 export const UPS = process.env.UPS || '1';
+export const URL = NODE_ENV == 'development' ? `http://localhost:${process.env.PORT || 3000}` : 'https://oracle-api.rjrietdijk.com'
 
 export const ROUTES = {
     INDEX: '/',
@@ -28,4 +29,8 @@ export const STATES = {
     ACTIVE: 'active',
     PROMPTING: 'prompting',
     PRINTING: 'printing'
+}
+
+export const PROMPT = (color) => {
+    `Hello, this is a prompt with the color ${color}`
 }

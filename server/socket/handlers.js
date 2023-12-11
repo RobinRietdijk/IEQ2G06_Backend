@@ -1,6 +1,6 @@
 import { emitError, trimSocket } from "./utils";
 import { socketioLogger as logger } from "../utils/logger";
-import { EVENTS, STATES, UPS } from "../utils/constants";
+import { EVENTS, PROMPT, STATES, UPS, URL } from "../utils/constants";
 import { InternalServerError } from "../utils/error";
 
 export function connection(ioc, socket, data) {
@@ -67,7 +67,7 @@ export function nodeData(ioc, socket, data) {
 
 export async function systemConclude(ioc, socket, data) {
     const { data: system_data } = data;
-    if (!message) {
+    if (!system_data) {
         emitError(socket, InvalidRequestError('Invalid request data'));
         return;
     }
@@ -84,9 +84,11 @@ export async function systemConclude(ioc, socket, data) {
 
     try {
         system.setState(STATES.PROMPTING);
-        const answer = await ioc.chatGPT.sendMessage(system_data.message);
+        const answer = await ioc.chatGPT.sendMessage(PROMPT(system_data.color));
+        const color_encoded = encodeURIComponent(btoa(system_data.color));
+        const poem_encoded = encodeURIComponent(btoa(answer));
+        const url = `${URL}/card/${color_encoded}-${poem_encoded}`;
         system.setState(STATES.PRINTING);
-        console.log(answer)
     } catch (error) {
         emitError(socket, InternalServerError(error));
         logger.error(error);
