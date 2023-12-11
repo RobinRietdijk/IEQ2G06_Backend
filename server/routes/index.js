@@ -2,7 +2,7 @@ import express from 'express';
 import { ROUTES } from '../utils/constants';
 import { appLogger as logger } from '../utils/logger';
 import indexHandler from './handler';
-import formatHandler from './format/handler';
+import cardHandler from './card/handler';
 import gptHandler from './gpt/handler';
 const router = express.Router();
 
@@ -13,9 +13,8 @@ const errorHandler = (error, req, res, next) => {
 
 router.route(ROUTES.INDEX)
     .get(indexHandler.GET);
-router.route(ROUTES.FORMAT)
-    .get(formatHandler.GET)
-    .post(formatHandler.POST);
+router.route(ROUTES.CARD + '/:color-:poem')
+    .get(cardHandler.GET);
 router.route(ROUTES.GPT)
     .get(gptHandler.GET)
     .post(gptHandler.POST);

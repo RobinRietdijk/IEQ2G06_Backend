@@ -1,7 +1,10 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <title>Card template</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poem</title>
     <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="/stylesheets/card.css">
 </head>
@@ -35,10 +38,10 @@
     </div>
 
     <script>
-        const parameterValueFromRoute = '<%= param %>';
-        console.log(parameterValueFromRoute);
+        const color_encoded = '<%= color %>';
+        const poem_encoded = '<%= poem %>';
     </script>
-    <script type="module" src="/js/index.js"></script>
+    <script type="module" src="/js/index.js" defer></script>
 </body>
 
 </html>

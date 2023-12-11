@@ -1,9 +1,9 @@
 export const NODE_ENV = process.env.NODE_ENV;
-export const UPS = process.env.UPS || '20';
+export const UPS = process.env.UPS || '10';
 
 export const ROUTES = {
     INDEX: '/',
-    FORMAT: '/format',
+    CARD: '/card',
     GPT: '/gpt'
 }
 

@@ -64,16 +64,19 @@ export default class SocketController {
 
     #checkChangedData() {
         const rooms = this.io.sockets.adapter.rooms;
-        for (const room in rooms) if (room) this.#checkRoomChangedData(room);
+        for (const [room, sockets] of rooms.entries()) {
+            if (sockets.size > 1 || (sockets.size === 1 && [...sockets][0] !== room)) {
+                this.#checkRoomChangedData(room);
+            }
+        }
     }
-    
+
     #checkRoomChangedData(room) {
-        const socketsInRoom = this.io.sockets.adapter.rooms[room].sockets;
+        const socketsInRoom = [...this.io.sockets.adapter.rooms.get(room)];
         const systemPackage = {};
         let changed = false;
-        for (const socketId in socketsInRoom) {
+        for (const socketId of socketsInRoom) {
             const node = this.node_clients[socketId];
-    
             if (node) {
                 if (node.hasChanged()) changed = true;
                 systemPackage[node.getId()] = node.getData();
@@ -93,7 +96,7 @@ export default class SocketController {
                 }
             } catch (error) {
                 logger.warn(error);
-            }            
+            }
         }
     }
 
