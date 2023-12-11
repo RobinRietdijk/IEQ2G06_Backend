@@ -66,7 +66,7 @@ export function nodeData(ioc, socket, data) {
 }
 
 export async function systemConclude(ioc, socket, data) {
-    const { message } = data;
+    const { data: system_data } = data;
     if (!message) {
         emitError(socket, InvalidRequestError('Invalid request data'));
         return;
@@ -84,7 +84,7 @@ export async function systemConclude(ioc, socket, data) {
 
     try {
         system.setState(STATES.PROMPTING);
-        const answer = await ioc.chatGPT.sendMessage(message);
+        const answer = await ioc.chatGPT.sendMessage(system_data.message);
         system.setState(STATES.FIN_PROMPTING);
         console.log(answer)
     } catch (error) {
