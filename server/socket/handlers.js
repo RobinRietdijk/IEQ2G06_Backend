@@ -85,7 +85,7 @@ export async function systemConclude(ioc, socket, data) {
     try {
         system.setState(STATES.PROMPTING);
         const answer = await ioc.chatGPT.sendMessage(system_data.message);
-        system.setState(STATES.FIN_PROMPTING);
+        system.setState(STATES.PRINTING);
         console.log(answer)
     } catch (error) {
         emitError(socket, InternalServerError(error));
