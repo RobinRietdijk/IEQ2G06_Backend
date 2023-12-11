@@ -3,7 +3,8 @@ export const UPS = process.env.UPS || '1';
 
 export const ROUTES = {
     INDEX: '/',
-    FORMAT: '/format',
+    CARD: '/card',
+    GPT: '/gpt'
 }
 
 export const EVENTS = {
