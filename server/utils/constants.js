@@ -14,6 +14,7 @@ export const EVENTS = {
     NODE_CONNECT: 'node_connect',
     NODE_CONNECTED: 'node_connected',
     NODE_DATA: 'node_data',
+    NODE_SET_STATE: 'node_set_state',
     SYSTEM_DATA: 'system_data',
     SYSTEM_STATE: 'system_state',
     SYSTEM_CONCLUDE: 'system_conclude',
@@ -27,8 +28,10 @@ export const ROOMS = {
 export const STATES = {
     IDLE: 'idle',
     ACTIVE: 'active',
+    INACTIVE: 'inactive',
     PROMPTING: 'prompting',
-    PRINTING: 'printing'
+    PRINTING: 'printing',
+    ERROR: 'error'
 }
 
 export const PROMPT = (color) => {

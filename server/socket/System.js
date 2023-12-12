@@ -60,9 +60,6 @@ export default class System {
 
     updateNodeData(socket, node_data) {
         this.#last_update = new Date().getTime();
-        if (this.#state === STATES.IDLE) {
-            this.setState(STATES.ACTIVE);
-        }
         this.#nodes[socket.id].setData(node_data);
     }
 
@@ -70,7 +67,6 @@ export default class System {
         const systemPackage = {};
         let changed = false;
         for (const node of Object.values(this.#nodes)) {
-            console.log(typeof(node))
             if (node.isConnected()) {
                 if (node.hasChanged()) changed = true;
                 systemPackage[node.getId()] = node.getData();
@@ -83,7 +79,7 @@ export default class System {
     idleLoop(timeout) {
         if (this.#state !== STATES.IDLE) {
             const now = new Date().getTime();
-            if (this.#state == STATES.ACTIVE && now - this.#last_update > timeout) {
+            if (this.#state == STATES.ACTIVE || this.#state == STATES.ERROR && now - this.#last_update > timeout) {
                 this.setState(STATES.IDLE);
             }
         }
@@ -91,7 +87,7 @@ export default class System {
 
     cleanupLoop(timeout) {
         const now = new Date().getTime();
-        for (const [key, node] in Object.entries(this.#nodes)) {
+        for (const [key, node] of Object.entries(this.#nodes)) {
             if (!node.isConnected() && now - node.getDisconnectedSince() > timeout) delete this.#nodes[key];
         }
     }
