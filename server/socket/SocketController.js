@@ -99,7 +99,7 @@ export default class SocketController {
             try {
                 for (const system of Object.values(this.#systems)) system.dataLoop();
             } catch (error) {
-                logger.error(error);
+                logger.error("Error in data loop: " + error.message);
             }
         }, 1000 / UPS);
     }
@@ -112,7 +112,7 @@ export default class SocketController {
                     if (system.size() < 1) delete this.#systems[key];
                 }
             } catch (error) {
-                logger.error(error);
+                logger.error("Error in cleanup loop: " + error.message);
             }
         }, MAX_DISCONNECT_DURATION);
     }
@@ -124,7 +124,7 @@ export default class SocketController {
                     system.idleLoop(IDLE_TIMEOUT);
                 }
             } catch (error) {
-                logger.error(error);
+                logger.error("Error in idle loop: " + error.message);
             }
         }, IDLE_TIMEOUT);
     }
