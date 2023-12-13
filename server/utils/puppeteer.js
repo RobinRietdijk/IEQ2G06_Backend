@@ -58,4 +58,5 @@ export async function generateImageOfElement(name, poem, color) {
 
     await elementHandle.screenshot({ path: outputPath });
     await browser.close();
+    return outputPath;
 }

@@ -109,8 +109,15 @@ export async function systemConclude(ioc, socket, data) {
     try {
         system.setState(STATES.PROMPTING);
         const answer = await ioc.chatGPT.sendMessage(PROMPT(system_data.color));
-        await generateImageOfElement(system.getSystemId(), answer, system_data.color);
+        const imagePath = await generateImageOfElement(system.getSystemId(), answer, system_data.color);
         system.setState(STATES.PRINTING);
+        exec(`start ${imagePath}`, (error, stdout, stderr) => {
+            if (error) {
+              console.error(`Error opening image: ${error.message}`);
+              return;
+            }
+            console.log(`Image opened successfully`);
+          });
         setTimeout(() => { system.setState(STATES.IDLE) }, 10000);
     } catch (error) {
         system.setState(STATES.ERROR)
