@@ -14,7 +14,7 @@ export const EVENTS = {
     NODE_CONNECT: 'node_connect',
     NODE_CONNECTED: 'node_connected',
     NODE_DATA: 'node_data',
-    NODE_SET_STATE: 'node_set_state',
+    NODE_ACTIVATED: 'node_activated',
     SYSTEM_DATA: 'system_data',
     SYSTEM_STATE: 'system_state',
     SYSTEM_CONCLUDE: 'system_conclude',

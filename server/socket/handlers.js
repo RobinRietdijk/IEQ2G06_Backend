@@ -1,7 +1,8 @@
 import { emitError, trimSocket, sleepUntil } from "./utils";
 import { socketioLogger as logger } from "../utils/logger";
 import { EVENTS, PROMPT, STATES, UPS, URL } from "../utils/constants";
-import { InternalServerError } from "../utils/error";
+import { InternalServerError, InvalidRequestError } from "../utils/error";
+import { generateImageOfElement } from "../utils/puppeteer";
 
 export function connection(ioc, socket, data) {
     logger.info('Connected', JSON.parse(trimSocket(socket)));
@@ -70,13 +71,7 @@ export function nodeData(ioc, socket, data) {
     system.updateNodeData(socket, node_data);
 }
 
-export function nodeSetState(ioc, socket, data) {
-    const { state } = data;
-    if (!state) {
-        emitError(socket, InvalidRequestError('Invalid request data'));
-        return;
-    }
-
+export function nodeActivated(ioc, socket, data) {
     const node = ioc.getNode(socket.id);
     if (!node) {
         emitError(socket, InvalidRequestError('Node does not exist, register the node before sending data'));
@@ -87,7 +82,7 @@ export function nodeSetState(ioc, socket, data) {
         emitError(socket, InternalServerError('Node is not connected to a system'));
     }
 
-    system.setState(state);
+    system.setState(STATES.ACTIVE);
 }
 
 export async function systemConclude(ioc, socket, data) {
@@ -107,17 +102,16 @@ export async function systemConclude(ioc, socket, data) {
         emitError(socket, InternalServerError('Node is not connected to a system'));
     }
 
+    if (system.getState() !== STATES.ACTIVE) {
+        return
+    }
+
     try {
         system.setState(STATES.PROMPTING);
-        const targetTime = new Date().getTime() + 10000
         const answer = await ioc.chatGPT.sendMessage(PROMPT(system_data.color));
-        const color_encoded = encodeURIComponent(btoa(system_data.color));
-        const poem_encoded = encodeURIComponent(btoa(answer));
-        const url = `${URL}/card/${color_encoded}-${poem_encoded}`;
-        
-        await sleepUntil(targetTime);
+        await generateImageOfElement(system.getSystemId(), answer, system_data.color);
         system.setState(STATES.PRINTING);
-        setTimeout(() => { system.setState(STATES.INACTIVE) }, 10000);
+        setTimeout(() => { system.setState(STATES.IDLE) }, 10000);
     } catch (error) {
         system.setState(STATES.ERROR)
         emitError(socket, InternalServerError(error));

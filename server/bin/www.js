@@ -3,40 +3,62 @@
 /**
  * Module dependencies.
  */
-
 import app from '../app';
 import http from 'http';
 import SocketController from '../socket/SocketController';
 import { appLogger as logger } from '../utils/logger';
+import fs from 'fs/promises';
 
-/**
- * Get port from environment and store in Express.
- */
+let server;
+const startServer = async () => {
+  try {
+    // Specify the path to your secrets file
+    const secretsFilePath = './secrets.json';
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+    // Load secrets and set environment variables
+    const secrets = await loadSecrets(secretsFilePath);
+    setEnvironmentVariables(secrets);
 
-/**
- * Create HTTP server.
- */
+    // Get port from environment and store in Express.
+    const port = normalizePort(process.env.PORT || '3000');
+    app.set('port', port);
 
-var server = http.createServer(app);
+    // Create HTTP server.
+    server = http.createServer(app);
 
-/**
- * Setup socket.io server.
- */
+    // Setup socket.io server.
+    const sc = new SocketController();
+    sc.initSocketController(server);
+    app.set('socket', sc.io);
 
-var sc = new SocketController()
-sc.initSocketController(server);
-app.set('socket', sc.io);
+    // Listen on provided port, on all network interfaces.
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+  } catch (error) {
+    console.error(`Error starting the server: ${error.message}`);
+    process.exit(1);
+  }
+};
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+// Run the server start process
+startServer();
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+async function loadSecrets(filePath) {
+  try {
+    const secretsRaw = await fs.readFile(filePath, 'utf-8');
+    return JSON.parse(secretsRaw);
+  } catch (error) {
+    console.error(`Error reading secrets file: ${error.message}`);
+    return {};
+  }
+};
+
+function setEnvironmentVariables(secrets) {
+  Object.entries(secrets).forEach(([key, value]) => {
+    process.env[key] = value;
+  });
+};
 
 /**
  * Normalize a port into a number, string, or false.
