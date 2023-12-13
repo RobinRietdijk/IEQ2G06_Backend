@@ -1,9 +1,10 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,visualstudiocode
 
+secrets.json
+./secrets.json
 ### Node ###
 # Logs
-secrets.json
 logs
 *.log
 npm-debug.log*
