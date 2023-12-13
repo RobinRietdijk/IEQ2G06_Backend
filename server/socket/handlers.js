@@ -3,6 +3,7 @@ import { socketioLogger as logger } from "../utils/logger";
 import { EVENTS, PROMPT, STATES, UPS, URL } from "../utils/constants";
 import { InternalServerError, InvalidRequestError } from "../utils/error";
 import { generateImageOfElement } from "../utils/puppeteer";
+import { exec } from 'child_process';
 
 export function connection(ioc, socket, data) {
     logger.info('Connected', JSON.parse(trimSocket(socket)));
@@ -109,16 +110,16 @@ export async function systemConclude(ioc, socket, data) {
     try {
         system.setState(STATES.PROMPTING);
         const answer = await ioc.chatGPT.sendMessage(PROMPT(system_data.color));
-        const imagePath = await generateImageOfElement(system.getSystemId(), answer, system_data.color);
+        const imagePath = await generateImageOfElement(system.getSystemId(), answer.text, system_data.color);
         system.setState(STATES.PRINTING);
         exec(`start ${imagePath}`, (error, stdout, stderr) => {
             if (error) {
               console.error(`Error opening image: ${error.message}`);
               return;
             }
-            console.log(`Image opened successfully`);
           });
-        setTimeout(() => { system.setState(STATES.IDLE) }, 10000);
+        system.setState(STATES.INACTIVE)
+        setTimeout(() => { system.setState(STATES.IDLE) }, 1000 * 60 * 60);
     } catch (error) {
         system.setState(STATES.ERROR)
         emitError(socket, InternalServerError(error));

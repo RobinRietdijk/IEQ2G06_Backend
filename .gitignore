@@ -1,8 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,visualstudiocode
 
-secrets.json
-./secrets.json
 ### Node ###
 # Logs
 logs
@@ -164,3 +162,4 @@ dist
 
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode
 secrets.json
+tmp/*
