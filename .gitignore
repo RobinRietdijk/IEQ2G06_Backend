@@ -3,6 +3,7 @@
 
 ### Node ###
 # Logs
+secrets.json
 logs
 *.log
 npm-debug.log*
