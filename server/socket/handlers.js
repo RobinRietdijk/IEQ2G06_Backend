@@ -109,7 +109,8 @@ export async function systemConclude(ioc, socket, data) {
 
     try {
         system.setState(STATES.PROMPTING);
-        const answer = await ioc.chatGPT.sendMessage(PROMPT(system_data.color));
+        const prompt = PROMPT(system_data.color)
+        const answer = await ioc.chatGPT.sendMessage(prompt);
         const imagePath = await generateImageOfElement(system.getSystemId(), answer.text, system_data.color);
         system.setState(STATES.PRINTING);
         exec(`start ${imagePath}`, (error, stdout, stderr) => {
@@ -119,7 +120,7 @@ export async function systemConclude(ioc, socket, data) {
             }
           });
         system.setState(STATES.INACTIVE)
-        setTimeout(() => { system.setState(STATES.IDLE) }, 1000 * 60 * 60);
+        setTimeout(() => { system.setState(STATES.IDLE) }, 1000 * 60);
     } catch (error) {
         system.setState(STATES.ERROR)
         emitError(socket, InternalServerError(error));
