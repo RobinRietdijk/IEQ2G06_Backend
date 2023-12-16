@@ -12,7 +12,7 @@ export default class MQTTController {
 
     init() {
         if (this.#shiftr_client) throw new Error('MQTTController has already been initialized');
-        const token = process.env.SHIFTRTOKEN || 'mqtt://ide-education:Sy0L85iwSSgc1P7E@ide-education.cloud.shiftr.io';
+        const token = process.env.SHIFTRTOKEN;
         try {
             this.#shiftr_client = mqtt.connect(token, {
                 clientId: "DELPHI-server"
