@@ -1,9 +1,8 @@
-import { emitError, trimSocket, sleepUntil } from "./utils";
+import { emitError, trimSocket } from "./utils";
 import { socketioLogger as logger } from "../utils/logger";
 import { EVENTS, PROMPT, STATES, UPS, URL } from "../utils/constants";
 import { InternalServerError, InvalidRequestError } from "../utils/error";
 import { generateImageOfElement } from "../utils/puppeteer";
-import { exec } from 'child_process';
 
 export function connection(ioc, socket, data) {
     logger.info('Connected', JSON.parse(trimSocket(socket)));
@@ -89,7 +88,7 @@ export function nodeActivated(ioc, socket, data) {
 
 export async function systemConclude(ioc, socket, data) {
     const { data: system_data } = data;
-    if (!system_data) {
+    if (!system_data || !system_data.color || !system_data.location || !system_data.weather_location) {
         emitError(socket, InvalidRequestError('Invalid request data'));
         return;
     }
@@ -110,16 +109,29 @@ export async function systemConclude(ioc, socket, data) {
 
     try {
         system.setState(STATES.PROMPTING);
+
         const color = system_data.color;
-        const timeout = system_data.timeout || 60 * 1000;
-        const prompt = PROMPT(color);
-        const answer = await ioc.chatGPT.sendMessage(prompt);
-        const parsedAnswer = answer.text.replace(/\n/g, '<br>');
+        const location = system_data.location ;
+        const time = new Date().toLocaleDateString('en-us', {
+            dateStyle: 'full',
+            timeStyle: 'short',
+        });
+        const apiKey = process.env.WEATHERAPIKEY;
+        const weatherLocation = system_data.weather_location
+        const weatherRes = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${weatherLocation}&appid=${apiKey}`);
+        const weatherResJson = weatherRes.json()
+        const weather = `${weatherResJson.main.temp - 273.15}°C: ${weatherResJson.weather[0].description}`;
+        const prompt = PROMPT(color, time, weather, location);
+
+        const gptRes = await ioc.chatGPT.sendMessage(prompt);
+        const parsedAnswer = gptRes.text.replace(/\n/g, '<br>');
         const image = await generateImageOfElement(system.getSystemId(), parsedAnswer, color);
         system.emit(EVENTS.PRINT, { image: image });
-        system.setState(STATES.PRINTING);
-        let printTimeout;
 
+        system.setState(STATES.PRINTING);
+
+        const timeout = system_data.timeout || 60 * 1000;
+        let printTimeout;
         const printCompleteListener = () => {
             clearTimeout(printTimeout);
             system.setState(STATES.INACTIVE);

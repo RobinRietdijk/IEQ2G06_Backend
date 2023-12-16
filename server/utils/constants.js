@@ -36,7 +36,7 @@ export const STATES = {
     ERROR: 'error'
 }
 
-export const PROMPT = (color) => {
+export const PROMPT = (color, time, weather, location) => {
     return `
     Based on the given ranges:
     Use Adjectives that describe the following colour: ${color}. 
@@ -44,13 +44,12 @@ export const PROMPT = (color) => {
     The poem has 6 lines. Every line has a maximum of 5 words.
     Write in the style of a fortune reading.
     Use less corporate jargon. Use a conversational tone. Use poetic, beautiful words.
-    Make idirect references to:
-    - The colour ${color}
-    - The time (Beginning of december, there are some weeks left until the christmas break)
-    - The weather (9°C, Winter sun, cold air, cloudy)
-    - The place (Rotterdam, Design Fair, ThingsCon)
-    - exploring human-centric technologies
-    Forbidden words: „${color}, „Admidst“, „Hue“, „9°C“, „human-centric technologies“.
+    Use the following information to write the poem:
+    - The colour: ${color}
+    - The time: ${time}
+    - The weather: ${weather}
+    - The location: ${location}
+    Forbidden words: "${color}", "${weather}", "Admidst", "Hue".
     Make the last sentence an incitement.
     `
 }
