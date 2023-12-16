@@ -40,7 +40,6 @@ export default class SocketController {
             auth: false,
             mode: NODE_ENV,
         });
-
         this.chatGPT = new ChatGPT();
         this.#initListeners();
         this.#initDataLoop();
