@@ -1,6 +1,6 @@
 import { emitError, trimSocket } from "./utils";
 import { socketioLogger as logger } from "../utils/logger";
-import { EVENTS, PROMPT, STATES, UPS, URL } from "../utils/constants";
+import { EVENTS, PROMPT, ROOMS, STATES, UPS, URL } from "../utils/constants";
 import { InternalServerError, InvalidRequestError } from "../utils/error";
 import { generateImageOfElement } from "../utils/puppeteer";
 
@@ -49,6 +49,10 @@ export function nodeConnect(ioc, socket, data) {
 
     system.connectNode(socket, node_data);
     socket.emit(EVENTS.NODE_CONNECTED, { server_ups: UPS, state: system.getState() });
+}
+
+export function printerConnect(ioc, socket, data) {
+    socket.join(ROOMS.PRINTER);
 }
 
 export function nodeData(ioc, socket, data) {
@@ -111,7 +115,7 @@ export async function systemConclude(ioc, socket, data) {
         system.setState(STATES.PROMPTING);
 
         const color = system_data.color;
-        const location = system_data.location ;
+        const location = system_data.location;
         const time = new Date().toLocaleDateString('en-us', {
             dateStyle: 'full',
             timeStyle: 'short',
@@ -126,30 +130,29 @@ export async function systemConclude(ioc, socket, data) {
         const gptRes = await ioc.chatGPT.sendMessage(prompt);
         const parsedAnswer = gptRes.text.replace(/\n/g, '<br>');
         const image = await generateImageOfElement(system.getSystemId(), parsedAnswer, color);
-        system.emit(EVENTS.PRINT, { image: image });
+        ioc.to(ROOMS.PRINTER).emit(EVENTS.PRINT, { system_id: system.getSystemId(), image: image });
 
         system.setState(STATES.PRINTING);
-
         const timeout = system_data.timeout || 60 * 1000;
-        let printTimeout;
-        const printCompleteListener = () => {
-            clearTimeout(printTimeout);
-            system.setState(STATES.INACTIVE);
-            setTimeout(() => { system.setState(STATES.IDLE) }, timeout);
-
-            system.removeListener(EVENTS.PRINT_COMPLETE, printCompleteListener);
-        };
-
-        printTimeout = setTimeout(() => {
-            system.removeListener(EVENTS.PRINT_COMPLETE, printCompleteListener);
-            system.setState(STATES.INACTIVE);
-            setTimeout(() => { system.setState(STATES.IDLE) }, timeout);
-        }, 180 * 1000);
-
-        system.on(EVENTS.PRINT_COMPLETE, printCompleteListener);
+        system.startPrint(timeout)
     } catch (error) {
         system.setState(STATES.ERROR)
         emitError(socket, InternalServerError(error));
         logger.error(error);
     }
+}
+
+export function printComplete(ioc, socket, data) {
+    const { system_id } = data;
+    if (!system_id) {
+        emitError(socket, InvalidRequestError('Invalid request data'));
+        return;
+    }
+
+    let system = ioc.getSystem(system_id);
+    if (!system) {
+        emitError(socket, InternalServerError('System does not exist'));
+    }
+
+    system.completePrint();
 }

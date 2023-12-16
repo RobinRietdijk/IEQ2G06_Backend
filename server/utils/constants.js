@@ -24,7 +24,8 @@ export const EVENTS = {
 }
 
 export const ROOMS = {
-    SPECTATOR: 'spectator'
+    SPECTATOR: 'spectator',
+    PRINTER: 'printer'
 }
 
 export const STATES = {
