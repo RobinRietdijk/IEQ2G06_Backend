@@ -18,6 +18,8 @@ export const EVENTS = {
     SYSTEM_DATA: 'system_data',
     SYSTEM_STATE: 'system_state',
     SYSTEM_CONCLUDE: 'system_conclude',
+    PRINT: 'print',
+    PRINT_COMPLETE: 'print_complete',
     ERROR: 'error',
 }
 

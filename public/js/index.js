@@ -28,18 +28,20 @@ const cardContainer = document.querySelector(".card__container");
 const poemText = document.querySelector(".poem__inner span");
 const colorName = document.querySelector(".color__name span");
 const colorHex = document.querySelector(".color__hex span");
+const TUDLogo = document.querySelector(".title__logo svg");
 
 function setData(color, poem) {
     cardContainer.style.backgroundColor = color;
     const textColor = getContrastColor(color);
     cardContainer.style.color = textColor;
+    TUDLogo.querySelectorAll('*').forEach(function(el) {
+        el.style.fill = textColor;
+    });
     poemText.innerHTML = poem;
     colorName.innerHTML = GetColorName(color);
     colorHex.innerHTML = color;
 }
 
-const color_base64string = decodeURIComponent(color_encoded);
-const poem_base64string = decodeURIComponent(poem_encoded);
-const color = atob(color_base64string);
-const poem = atob(poem_base64string);
+const color = decodeURIComponent(color_encoded);
+const poem = decodeURIComponent(poem_encoded);
 setData(color, poem);

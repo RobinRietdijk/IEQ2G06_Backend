@@ -83,6 +83,7 @@ export function nodeActivated(ioc, socket, data) {
         emitError(socket, InternalServerError('Node is not connected to a system'));
     }
 
+    if (system.getState === STATES.ACTIVE) return;
     system.setState(STATES.ACTIVE);
 }
 
@@ -109,18 +110,30 @@ export async function systemConclude(ioc, socket, data) {
 
     try {
         system.setState(STATES.PROMPTING);
-        const prompt = PROMPT(system_data.color)
+        const color = system_data.color;
+        const timeout = system_data.timeout || 60 * 1000;
+        const prompt = PROMPT(color);
         const answer = await ioc.chatGPT.sendMessage(prompt);
-        const imagePath = await generateImageOfElement(system.getSystemId(), answer.text, system_data.color);
+        const image = await generateImageOfElement(system.getSystemId(), answer.text, color);
+        system.emit(EVENTS.PRINT, { image: image });
         system.setState(STATES.PRINTING);
-        exec(`start ${imagePath}`, (error, stdout, stderr) => {
-            if (error) {
-              console.error(`Error opening image: ${error.message}`);
-              return;
-            }
-          });
-        system.setState(STATES.INACTIVE)
-        setTimeout(() => { system.setState(STATES.IDLE) }, 1000 * 60);
+        let printTimeout;
+
+        const printCompleteListener = () => {
+            clearTimeout(printTimeout);
+            system.setState(STATES.INACTIVE);
+            setTimeout(() => { system.setState(STATES.IDLE) }, timeout);
+
+            system.removeListener(EVENTS.PRINT_COMPLETE, printCompleteListener);
+        };
+
+        printTimeout = setTimeout(() => {
+            system.removeListener(EVENTS.PRINT_COMPLETE, printCompleteListener);
+            system.setState(STATES.INACTIVE);
+            setTimeout(() => { system.setState(STATES.IDLE) }, timeout);
+        }, 180 * 1000);
+
+        system.on(EVENTS.PRINT_COMPLETE, printCompleteListener);
     } catch (error) {
         system.setState(STATES.ERROR)
         emitError(socket, InternalServerError(error));

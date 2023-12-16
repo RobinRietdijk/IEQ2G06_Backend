@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+
 .card__wrapper {
 	aspect-ratio: 4 / 6;
 	width: 400px;
@@ -7,26 +9,28 @@
 	position: relative;
 	width: 100%;
 	height: 100%;
+	background-image: url('../assets/grunge_texture.jpg');
+	background-size: 200% 200%;
+	background-blend-mode: multiply;
 }
 
-.poem__container {
-	display: grid;
+.poem__container { 
+	display: flex;
 	position: absolute;
 	left: 0;
 	right: 0;
 	top: 0;
 	bottom: 0;
-	margin: auto;
-	text-align: center;
 	aspect-ratio: 1 / 1;
-	width: 70%;
-	border-radius: 50%;
-	background-color: white;
-	align-content: center;
-	overflow: hidden;
+	width: 80%;
+	margin: auto;
 	padding: 20px;
-	display: flex;
+	text-align: center;
 	align-items: center;
+	overflow: hidden;
+	background-color: rgba(255, 255, 255, 0.9);
+	border-radius: 50%;
+	box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2);
 }
 
 .poem__inner {
@@ -40,12 +44,13 @@
 .poem__inner span {
 	max-height: 70%;
 	overflow: hidden;
-	font-family: "Georgia", serif;
-	font-size: 12px;
+	font-family: 'Playfair Display', serif;
+	font-size: 1rem;
+	font-weight: 600;
 	line-height: 1.6;
 	text-align: center;
 	color: #333;
-	max-width: 84%;
+	max-width: 100%;
 	margin-left: auto;
 	margin-right: auto;
 	box-sizing: border-box;
@@ -54,23 +59,39 @@
 .title__container {
 	position: absolute;
 	bottom: 0;
+	left: 0;
+	right: 0;
 	width: 100%;
-	max-height: 18%;
+	margin-left: auto;
+	margin-right: auto;
+	height: 120px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
 	box-sizing: border-box;
-	margin-bottom: 20px;
+}
+
+.title__logo {
+	flex: 1;
+	width: 60px;
+	margin-right: 55px;
+	display: flex;
+	box-sizing: border-box;
+	align-self: flex-end;
 }
 
 .title__text {
-	flex: 1;
+	flex: 2;
 	display: flex;
 	justify-content: center;
-	align-items: left;
-	margin: 0 5px;
+	margin: 0 auto 15px auto;
 	text-transform: uppercase;
+	text-shadow: #333 1px 0 5px;
+	font-size: 64px;
+	font-weight: 600;
+	letter-spacing: 10px;
+	line-height: 64px;
 }
 
 .title__text span {
@@ -78,13 +99,7 @@
 	font-weight: bold;
 }
 
-.tud_logo__container {
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	width: 40%;
-	box-sizing: border-box;
-}
+
 
 .color__container {
 	width: 100%;
@@ -92,10 +107,6 @@
 	padding: 40px 10px 10px 10px;
 	box-sizing: border-box;
 	text-align: center;
-}
-
-.color__name {
-	margin-bottom: 5px;
 }
 
 .color__name span {
@@ -108,6 +119,9 @@
 .color__hex span {
 	white-space: nowrap;
 	overflow: hidden;
+	text-transform: uppercase;
 	text-overflow: ellipsis;
 	font-weight: bold;
+	font-size: 0.75rem;
+	opacity: 0.7;
 }

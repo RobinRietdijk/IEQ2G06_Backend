@@ -39,15 +39,18 @@ export async function generateImageOfElement(name, poem, color) {
         const poemTextEl = document.querySelector(".poem__inner span");
         const colorNameEl = document.querySelector(".color__name span");
         const colorHexEl = document.querySelector(".color__hex span");
+        const TUDLogo = document.querySelector(".title__logo svg");
         cardContainerEl.style.backgroundColor = color;
         cardContainerEl.style.color = textColor;
+        TUDLogo.querySelectorAll('*').forEach(function(el) {
+            el.style.fill = textColor;
+        });
         poemTextEl.innerHTML = poem;
         colorNameEl.innerHTML = colorName;
         colorHexEl.innerHTML = color;
     }, poem, color, textColor, colorName);
 
     const selector = '#capture';
-    const outputPath = `./tmp/${name}.png`;
     const elementHandle = await page.$(selector);
 
     if (!elementHandle) {
@@ -56,7 +59,7 @@ export async function generateImageOfElement(name, poem, color) {
         return;
     }
 
-    await elementHandle.screenshot({ path: outputPath });
+    const image = await elementHandle.screenshot();
     await browser.close();
-    return outputPath;
+    return image;
 }
