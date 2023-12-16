@@ -8,7 +8,6 @@ export default class System {
     #nodes
     #last_update
     #state
-    #shiftr_client
 
     constructor(io, system_id) {
         this.#io = io
@@ -16,15 +15,6 @@ export default class System {
         this.#nodes = {};
         this.#last_update = new Date(0).getTime();
         this.#state = STATES.IDLE;
-        this.#shiftr_client = mqtt.connect("mqtt://ide-education:Sy0L85iwSSgc1P7E@ide-education.cloud.shiftr.io", {
-            clientId: `Oracle-${system_id}`
-        });
-
-        this.#shiftr_client.on('connect', () => {
-            setInterval(() => {
-                this.#shiftr_client.publish('Activity', 1.00 ? this.#state in [STATES.ACTIVE, STATES.PROMPTING, STATES.PRINTING] : 0.00);
-            });
-        });
     }
 
     size() {
