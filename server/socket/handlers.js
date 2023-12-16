@@ -114,7 +114,8 @@ export async function systemConclude(ioc, socket, data) {
         const timeout = system_data.timeout || 60 * 1000;
         const prompt = PROMPT(color);
         const answer = await ioc.chatGPT.sendMessage(prompt);
-        const image = await generateImageOfElement(system.getSystemId(), answer.text, color);
+        const parsedAnswer = answer.text.replace(/\n/g, '<br>');
+        const image = await generateImageOfElement(system.getSystemId(), parsedAnswer, color);
         system.emit(EVENTS.PRINT, { image: image });
         system.setState(STATES.PRINTING);
         let printTimeout;
