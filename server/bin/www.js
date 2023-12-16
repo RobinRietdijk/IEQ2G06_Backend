@@ -26,15 +26,17 @@ const startServer = async () => {
 
     // Create HTTP server.
     server = http.createServer(app);
+    
+    // Setup MQTT connection
+    const mqtt = new MQTTController();
+    mqtt.init()
 
     // Setup socket.io server.
     const sc = new SocketController();
     sc.initSocketController(server);
     app.set('socket', sc.io);
 
-    // Setup MQTT connection
-    const mqtt = new MQTTController();
-    mqtt.init()
+    
 
     // Listen on provided port, on all network interfaces.
     server.listen(port);

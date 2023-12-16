@@ -1,10 +1,11 @@
 import { Server } from "socket.io"
-import { NODE_ENV, EVENTS, UPS } from "../utils/constants";
+import { NODE_ENV, EVENTS, UPS, STATES } from "../utils/constants";
 import { instrument } from "@socket.io/admin-ui";
 import { appLogger as logger } from "../utils/logger";
 import { systemConclude, connection, disconnect, nodeConnect, nodeData, nodeActivated, printComplete } from "./handlers";
 import System from "./System";
 import ChatGPT from "../utils/ChatGPT";
+import MQTTController from "../mqtt/MQTTController";
 
 const MAX_DISCONNECT_DURATION = 2 * 60 * 1000
 const IDLE_TIMEOUT = 1 * 60 * 1000;
@@ -45,6 +46,7 @@ export default class SocketController {
         this.#initDataLoop();
         this.#initCleanupLoop();
         this.#initIdleLoop();
+        this.#initActivityLoop();
         this.connections = 0;
         this.#systems = {};
     }
@@ -128,5 +130,21 @@ export default class SocketController {
                 logger.error("Error in idle loop: " + error.message);
             }
         }, IDLE_TIMEOUT);
+    }
+
+    #initActivityLoop() {
+        setInterval(() => {
+            try {
+                let activity = 0.00;
+                for (const system of Object.values(this.#systems)) {
+                    activity += 1.00 ? system.getState() in [STATES.ACTIVE, STATES.PROMPTING, STATES.PRINTING] : 0.00;
+                }
+                activity = Math.min(Math.max(Object.keys(this.#systems).length / activity ? activity !== 0.00 : 0.00, 0.00), 1.00)
+                activity = activity.toFixed(2)
+                MQTTController.publish('Activity', activity.toString())
+            } catch (error) {
+                logger.error("Error in activity loop: " + error.message);
+            }
+        }, 1000);
     }
 }

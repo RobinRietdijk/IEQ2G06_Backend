@@ -24,4 +24,9 @@ export default class MQTTController {
             logger.warn("MQTT not connected:", error.message);
         }
     }
+
+    static publish(topic, message) {
+        if (!MQTTController.#instance || !MQTTController.#instance.#shiftr_client) return;
+        MQTTController.#instance.#shiftr_client.publish(topic, message);
+    }
 }
