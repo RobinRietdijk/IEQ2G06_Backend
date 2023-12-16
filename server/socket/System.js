@@ -1,5 +1,6 @@
 import { EVENTS, STATES } from "../utils/constants";
 import Node from "./Node";
+import mqtt from "mqtt";
 
 export default class System {
     #io
@@ -7,6 +8,7 @@ export default class System {
     #nodes
     #last_update
     #state
+    #shiftr_client
 
     constructor(io, system_id) {
         this.#io = io
@@ -14,6 +16,15 @@ export default class System {
         this.#nodes = {};
         this.#last_update = new Date(0).getTime();
         this.#state = STATES.IDLE;
+        this.#shiftr_client = mqtt.connect("mqtt://ide-education:Sy0L85iwSSgc1P7E@ide-education.cloud.shiftr.io", {
+            clientId: `Oracle-${system_id}`
+        });
+
+        this.#shiftr_client.on('connect', () => {
+            setInterval(() => {
+                this.#shiftr_client.publish('Activity', 1.00 ? this.#state in [STATES.ACTIVE, STATES.PROMPTING, STATES.PRINTING] : 0.00);
+            });
+        });
     }
 
     size() {
@@ -61,6 +72,21 @@ export default class System {
     updateNodeData(socket, node_data) {
         this.#last_update = new Date().getTime();
         this.#nodes[socket.id].setData(node_data);
+    }
+
+    startPrint(timeout) {
+        this.timeout = timeout
+        this.printTimeout = setTimeout(() => {
+            this.completePrint()
+        }, 1000 * 60 * 3);
+    }
+
+    completePrint() {
+        this.setState(STATES.INACTIVE);
+        setTimeout(() => { this.setState(STATES.IDLE) }, this.timeout);
+        clearTimeout(this.printTimeout);
+        this.timeout = undefined;
+        this.printTimeout = undefined;
     }
 
     dataLoop() {

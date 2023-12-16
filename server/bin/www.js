@@ -8,6 +8,7 @@ import http from 'http';
 import SocketController from '../socket/SocketController';
 import { appLogger as logger } from '../utils/logger';
 import fs from 'fs/promises';
+import MQTTController from '../mqtt/MQTTController';
 
 let server;
 const startServer = async () => {
@@ -30,6 +31,10 @@ const startServer = async () => {
     const sc = new SocketController();
     sc.initSocketController(server);
     app.set('socket', sc.io);
+
+    // Setup MQTT connection
+    const mqtt = new MQTTController();
+    mqtt.init()
 
     // Listen on provided port, on all network interfaces.
     server.listen(port);
