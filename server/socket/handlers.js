@@ -1,7 +1,9 @@
-import { emitError, trimSocket } from "./utils";
+import { emitError, trimSocket, sleepUntil } from "./utils";
 import { socketioLogger as logger } from "../utils/logger";
-import { EVENTS, STATES, UPS } from "../utils/constants";
-import { InternalServerError } from "../utils/error";
+import { EVENTS, PROMPT, STATES, UPS, URL } from "../utils/constants";
+import { InternalServerError, InvalidRequestError } from "../utils/error";
+import { generateImageOfElement } from "../utils/puppeteer";
+import { exec } from 'child_process';
 
 export function connection(ioc, socket, data) {
     logger.info('Connected', JSON.parse(trimSocket(socket)));
@@ -58,16 +60,36 @@ export function nodeData(ioc, socket, data) {
     }
 
     const node = ioc.getNode(socket.id);
-    if (node) node.setData(node_data);
-    else {
+    if (!node) {
         emitError(socket, InvalidRequestError('Node does not exist, register the node before sending data'));
         return;
     }
+    const system = ioc.getSystemFromSocket(socket.id);
+    if (!system) {
+        emitError(socket, InternalServerError('Node is not connected to a system'));
+    }
+
+    system.updateNodeData(socket, node_data);
+}
+
+export function nodeActivated(ioc, socket, data) {
+    const node = ioc.getNode(socket.id);
+    if (!node) {
+        emitError(socket, InvalidRequestError('Node does not exist, register the node before sending data'));
+        return;
+    }
+    const system = ioc.getSystemFromSocket(socket.id);
+    if (!system) {
+        emitError(socket, InternalServerError('Node is not connected to a system'));
+    }
+
+    if (system.getState === STATES.ACTIVE) return;
+    system.setState(STATES.ACTIVE);
 }
 
 export async function systemConclude(ioc, socket, data) {
     const { data: system_data } = data;
-    if (!message) {
+    if (!system_data) {
         emitError(socket, InvalidRequestError('Invalid request data'));
         return;
     }
@@ -82,12 +104,39 @@ export async function systemConclude(ioc, socket, data) {
         emitError(socket, InternalServerError('Node is not connected to a system'));
     }
 
+    if (system.getState() !== STATES.ACTIVE) {
+        return
+    }
+
     try {
         system.setState(STATES.PROMPTING);
-        const answer = await ioc.chatGPT.sendMessage(system_data.message);
-        system.setState(STATES.FIN_PROMPTING);
-        console.log(answer)
+        const color = system_data.color;
+        const timeout = system_data.timeout || 60 * 1000;
+        const prompt = PROMPT(color);
+        const answer = await ioc.chatGPT.sendMessage(prompt);
+        const parsedAnswer = answer.text.replace(/\n/g, '<br>');
+        const image = await generateImageOfElement(system.getSystemId(), parsedAnswer, color);
+        system.emit(EVENTS.PRINT, { image: image });
+        system.setState(STATES.PRINTING);
+        let printTimeout;
+
+        const printCompleteListener = () => {
+            clearTimeout(printTimeout);
+            system.setState(STATES.INACTIVE);
+            setTimeout(() => { system.setState(STATES.IDLE) }, timeout);
+
+            system.removeListener(EVENTS.PRINT_COMPLETE, printCompleteListener);
+        };
+
+        printTimeout = setTimeout(() => {
+            system.removeListener(EVENTS.PRINT_COMPLETE, printCompleteListener);
+            system.setState(STATES.INACTIVE);
+            setTimeout(() => { system.setState(STATES.IDLE) }, timeout);
+        }, 180 * 1000);
+
+        system.on(EVENTS.PRINT_COMPLETE, printCompleteListener);
     } catch (error) {
+        system.setState(STATES.ERROR)
         emitError(socket, InternalServerError(error));
         logger.error(error);
     }

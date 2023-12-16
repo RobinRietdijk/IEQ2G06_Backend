@@ -1,5 +1,6 @@
 export const NODE_ENV = process.env.NODE_ENV;
 export const UPS = process.env.UPS || '1';
+export const URL = NODE_ENV == 'development' ? `http://localhost:${process.env.PORT || 3000}` : 'https://oracle-api.rjrietdijk.com'
 
 export const ROUTES = {
     INDEX: '/',
@@ -13,9 +14,12 @@ export const EVENTS = {
     NODE_CONNECT: 'node_connect',
     NODE_CONNECTED: 'node_connected',
     NODE_DATA: 'node_data',
+    NODE_ACTIVATED: 'node_activated',
     SYSTEM_DATA: 'system_data',
     SYSTEM_STATE: 'system_state',
     SYSTEM_CONCLUDE: 'system_conclude',
+    PRINT: 'print',
+    PRINT_COMPLETE: 'print_complete',
     ERROR: 'error',
 }
 
@@ -26,6 +30,27 @@ export const ROOMS = {
 export const STATES = {
     IDLE: 'idle',
     ACTIVE: 'active',
+    INACTIVE: 'inactive',
     PROMPTING: 'prompting',
-    FIN_PROMPTING: 'finished_prompting'
+    PRINTING: 'printing',
+    ERROR: 'error'
+}
+
+export const PROMPT = (color) => {
+    return `
+    Based on the given ranges:
+    Use Adjectives that describe the following colour: ${color}. 
+    Write a poem.
+    The poem has 6 lines. Every line has a maximum of 5 words.
+    Write in the style of a fortune reading.
+    Use less corporate jargon. Use a conversational tone. Use poetic, beautiful words.
+    Make idirect references to:
+    - The colour ${color}
+    - The time (Beginning of december, there are some weeks left until the christmas break)
+    - The weather (9°C, Winter sun, cold air, cloudy)
+    - The place (Rotterdam, Design Fair, ThingsCon)
+    - exploring human-centric technologies
+    Forbidden words: „${color}, „Admidst“, „Hue“, „9°C“, „human-centric technologies“.
+    Make the last sentence an incitement.
+    `
 }

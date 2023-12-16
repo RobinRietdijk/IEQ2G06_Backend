@@ -20,7 +20,7 @@ export default class System {
         return Object.keys(this.#nodes).length;
     }
 
-    emit(event, data=null) {
+    emit(event, data = null) {
         this.#io.to(this.#system_id).emit(event, data);
     }
 
@@ -46,8 +46,9 @@ export default class System {
     }
 
     createNode(socket_id, node_id) {
-        this.#nodes[socket_id] = new Node(node_id);
-        return this.#nodes[socket_id];
+        const node = new Node(node_id);
+        this.#nodes[socket_id] = node;
+        return node;
     }
 
     connectNode(socket, node_data) {
@@ -59,16 +60,13 @@ export default class System {
 
     updateNodeData(socket, node_data) {
         this.#last_update = new Date().getTime();
-        if (this.#state === STATES.IDLE) {
-            this.setState(STATES.ACTIVE);
-        }
         this.#nodes[socket.id].setData(node_data);
     }
 
     dataLoop() {
         const systemPackage = {};
         let changed = false;
-        for (const node in Object.values(this.#nodes)) {
+        for (const node of Object.values(this.#nodes)) {
             if (node.isConnected()) {
                 if (node.hasChanged()) changed = true;
                 systemPackage[node.getId()] = node.getData();
@@ -77,11 +75,11 @@ export default class System {
 
         if (changed) this.emit(EVENTS.SYSTEM_DATA, { system_data: systemPackage });
     }
-    
+
     idleLoop(timeout) {
         if (this.#state !== STATES.IDLE) {
             const now = new Date().getTime();
-            if (now - this.#last_update > timeout) {
+            if (this.#state == STATES.ACTIVE || this.#state == STATES.ERROR && now - this.#last_update > timeout) {
                 this.setState(STATES.IDLE);
             }
         }
@@ -89,7 +87,7 @@ export default class System {
 
     cleanupLoop(timeout) {
         const now = new Date().getTime();
-        for (const [key, node] in Object.entries(this.#nodes)) {
+        for (const [key, node] of Object.entries(this.#nodes)) {
             if (!node.isConnected() && now - node.getDisconnectedSince() > timeout) delete this.#nodes[key];
         }
     }

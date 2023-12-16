@@ -29,7 +29,7 @@ const socketLogFile = new winston.transports.DailyRotateFile({
 });
 
 const appLogger = winston.createLogger({
-    level: process.env.LOG_LEVEL || 'verbose',
+    level: process.env.LOG_LEVEL || 'info',
     format: format.combine(
         format.timestamp({
             format: 'YYYY-MM-DD hh:mm:ss.SSS A'
@@ -52,7 +52,7 @@ const appLogger = winston.createLogger({
 });
 
 const httpLogger = winston.createLogger({
-    level: process.env.LOG_LEVEL || 'verbose',
+    level: process.env.LOG_LEVEL || 'info',
     format: format.combine(
         format.timestamp({
             format: 'YYYY-MM-DD hh:mm:ss.SSS A'
@@ -95,7 +95,7 @@ const levels = {
     silly: 6
 }
 const socketioLogger = winston.createLogger({
-    level: process.env.LOG_LEVEL || 'verbose',
+    level: process.env.LOG_LEVEL || 'info',
     levels: levels,
     format: format.combine(
         format.timestamp({

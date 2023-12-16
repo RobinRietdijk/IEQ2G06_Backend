@@ -2,7 +2,7 @@ import { Server } from "socket.io"
 import { NODE_ENV, EVENTS, UPS } from "../utils/constants";
 import { instrument } from "@socket.io/admin-ui";
 import { appLogger as logger } from "../utils/logger";
-import { conclude, connection, disconnect, nodeConnect, nodeData } from "./handlers";
+import { systemConclude, connection, disconnect, nodeConnect, nodeData, nodeActivated } from "./handlers";
 import System from "./System";
 import ChatGPT from "../utils/ChatGPT";
 
@@ -90,7 +90,8 @@ export default class SocketController {
             socket.on(EVENTS.DISCONNECT, (data) => disconnect(this, socket, data));
             socket.on(EVENTS.NODE_CONNECT, (data) => nodeConnect(this, socket, data));
             socket.on(EVENTS.NODE_DATA, (data) => nodeData(this, socket, data));
-            socket.on(EVENTS.SYSTEM_CONCLUDE, (data) => conclude(this, socket, data));
+            socket.on(EVENTS.SYSTEM_CONCLUDE, (data) => systemConclude(this, socket, data));
+            socket.on(EVENTS.NODE_ACTIVATED, (data) => nodeActivated(this, socket, data));
         });
     }
 
@@ -99,7 +100,7 @@ export default class SocketController {
             try {
                 for (const system of Object.values(this.#systems)) system.dataLoop();
             } catch (error) {
-                logger.error(error);
+                logger.error("Error in data loop: " + error.message);
             }
         }, 1000 / UPS);
     }
@@ -112,7 +113,7 @@ export default class SocketController {
                     if (system.size() < 1) delete this.#systems[key];
                 }
             } catch (error) {
-                logger.error(error);
+                logger.error("Error in cleanup loop: " + error.message);
             }
         }, MAX_DISCONNECT_DURATION);
     }
@@ -124,7 +125,7 @@ export default class SocketController {
                     system.idleLoop(IDLE_TIMEOUT);
                 }
             } catch (error) {
-                logger.error(error);
+                logger.error("Error in idle loop: " + error.message);
             }
         }, IDLE_TIMEOUT);
     }

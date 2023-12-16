@@ -18,3 +18,10 @@ export function trimSocket(socket, args = {}) {
         referer: socket.handshake.headers.referer || '',
     }, args));
 }
+
+function sleepUntil(targetTime) {
+    const currentTime = new Date().getTime();
+    const timeToSleep = targetTime - currentTime;
+
+    return new Promise(resolve => setTimeout(resolve, timeToSleep));
+}
