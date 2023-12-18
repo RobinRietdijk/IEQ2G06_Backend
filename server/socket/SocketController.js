@@ -82,7 +82,7 @@ export default class SocketController {
             const node = system.getNode(socket_id);
             if (node) return node;
         }
-        throw new Error("Cannot find node from socket id");
+        return undefined;
     }
 
     #initListeners() {
