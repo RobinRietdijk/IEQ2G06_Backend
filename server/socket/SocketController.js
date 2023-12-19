@@ -2,7 +2,7 @@ import { Server } from "socket.io"
 import { NODE_ENV, EVENTS, UPS, STATES } from "../utils/constants";
 import { instrument } from "@socket.io/admin-ui";
 import { appLogger as logger } from "../utils/logger";
-import { systemConclude, connection, disconnect, nodeConnect, nodeData, nodeActivated, printComplete } from "./handlers";
+import { systemConclude, connection, disconnect, nodeConnect, nodeData, nodeActivated, printComplete, printerConnect } from "./handlers";
 import System from "./System";
 import ChatGPT from "../utils/ChatGPT";
 import MQTTController from "../mqtt/MQTTController";
@@ -94,6 +94,7 @@ export default class SocketController {
             socket.on(EVENTS.SYSTEM_CONCLUDE, (data) => systemConclude(this, socket, data));
             socket.on(EVENTS.NODE_ACTIVATED, (data) => nodeActivated(this, socket, data));
             socket.on(EVENTS.PRINT_COMPLETE, (data) => printComplete(this, socket, data));
+            socket.on(EVENTS.PRINTER_CONNECT, (data) => printerConnect(this, socket, data));
         });
     }
 
