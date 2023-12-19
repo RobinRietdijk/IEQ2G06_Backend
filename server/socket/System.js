@@ -1,6 +1,5 @@
 import { EVENTS, STATES } from "../utils/constants";
 import Node from "./Node";
-import mqtt from "mqtt";
 
 export default class System {
     #io

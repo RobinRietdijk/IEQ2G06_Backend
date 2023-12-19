@@ -20,6 +20,7 @@ export const EVENTS = {
     SYSTEM_CONCLUDE: 'system_conclude',
     PRINT: 'print',
     PRINT_COMPLETE: 'print_complete',
+    PRINTER_CONNECT: 'printer_connect',
     ERROR: 'error',
 }
 
