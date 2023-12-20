@@ -1,4 +1,5 @@
 import { EVENTS, STATES } from "../utils/constants";
+import { appLogger as logger } from "../utils/logger";
 import Node from "./Node";
 
 export default class System {
@@ -41,6 +42,7 @@ export default class System {
     }
 
     setState(state) {
+        logger.info(`State update from ${this.#state} to ${state}`)
         this.#state = state
         this.emit(EVENTS.SYSTEM_STATE, { state: state });
     }
