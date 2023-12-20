@@ -93,7 +93,6 @@ export default class SocketController {
             socket.on(EVENTS.NODE_DATA, (data) => nodeData(this, socket, data));
             socket.on(EVENTS.SYSTEM_CONCLUDE, (data) => systemConclude(this, socket, data));
             socket.on(EVENTS.NODE_ACTIVATED, (data) => nodeActivated(this, socket, data));
-            socket.on(EVENTS.PRINT_COMPLETE, (data) => printComplete(this, socket, data));
             socket.on(EVENTS.PRINTER_CONNECT, (data) => printerConnect(this, socket, data));
         });
     }

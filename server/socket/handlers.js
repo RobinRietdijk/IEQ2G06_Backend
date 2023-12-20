@@ -139,18 +139,3 @@ export async function systemConclude(ioc, socket, data) {
         logger.error(error);
     }
 }
-
-export function printComplete(ioc, socket, data) {
-    const { system_id } = data;
-    if (!system_id) {
-        emitError(socket, InvalidRequestError('Invalid request data'));
-        return;
-    }
-
-    let system = ioc.getSystem(system_id);
-    if (!system) {
-        emitError(socket, InternalServerError('System does not exist'));
-    }
-
-    system.completePrint();
-}
