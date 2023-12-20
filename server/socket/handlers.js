@@ -133,26 +133,9 @@ export async function systemConclude(ioc, socket, data) {
         ioc.to(ROOMS.PRINTER).emit(EVENTS.PRINT, { system_id: system.getSystemId(), image: image });
 
         system.setState(STATES.PRINTING);
-        const timeout = system_data.timeout || 60 * 1000;
-        system.startPrint(timeout)
     } catch (error) {
         system.setState(STATES.ERROR)
         emitError(socket, InternalServerError(error));
         logger.error(error);
     }
-}
-
-export function printComplete(ioc, socket, data) {
-    const { system_id } = data;
-    if (!system_id) {
-        emitError(socket, InvalidRequestError('Invalid request data'));
-        return;
-    }
-
-    let system = ioc.getSystem(system_id);
-    if (!system) {
-        emitError(socket, InternalServerError('System does not exist'));
-    }
-
-    system.completePrint();
 }

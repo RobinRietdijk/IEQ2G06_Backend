@@ -65,21 +65,6 @@ export default class System {
         this.#nodes[socket.id].setData(node_data);
     }
 
-    startPrint(timeout) {
-        this.timeout = timeout
-        this.printTimeout = setTimeout(() => {
-            this.completePrint()
-        }, 1000 * 60 * 3);
-    }
-
-    completePrint() {
-        this.setState(STATES.INACTIVE);
-        setTimeout(() => { this.setState(STATES.IDLE) }, this.timeout);
-        clearTimeout(this.printTimeout);
-        this.timeout = undefined;
-        this.printTimeout = undefined;
-    }
-
     dataLoop() {
         const systemPackage = {};
         let changed = false;
