@@ -84,10 +84,10 @@ export default class System {
         for (const node of Object.values(this.#nodes)) {
             if (node.isConnected()) {
                 if (node.hasChanged()) changed = true;
-                systemPackage[node.getId()] = node.getData();
+                const node_data = node.getData();
+                if (node_data) systemPackage[node.getId()] = node_data;
             }
         }
-
         if (changed) this.emit(EVENTS.SYSTEM_DATA, { system_data: systemPackage });
     }
 
