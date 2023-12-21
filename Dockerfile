@@ -16,37 +16,26 @@ COPY . .
 # Build the application using Babel
 RUN npm run build
 
-# Runtime stage with Ubuntu base image
-FROM ubuntu:latest
-
-# Set up Node.js environment
-RUN apt-get update && \
-    apt-get install -y curl software-properties-common && \
-    curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && \
-    apt-get install -y nodejs
+# Use a smaller image for running the application
+FROM node:latest 
 
 WORKDIR /app
 
+# Copy only the necessary files from the builder stage
 COPY --from=builder /src/package*.json ./
 COPY --from=builder /src/dist/ ./dist
 COPY --from=builder /src/public/ ./public
 COPY --from=builder /src/socket-admin/ ./socket-admin
 
-# Install Chromium
-RUN if [ "$(uname -m)" = "x86_64" ]; then \
-        apt-get install -y chromium-browser; \
-    else \
-        apt-get install -y chromium; \
-    fi && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 # Install dependencies
 RUN npm install --only=production
 
+# Set the GPTAPIKEY secret as an environment variable during build
 ARG GPTAPIKEY
 ENV GPTAPIKEY=$GPTAPIKEY
 
+# Expose the port your application is running on (replace with your port)
 EXPOSE 3000
 
+# Define the command to start your application
 CMD ["npm", "start"]
