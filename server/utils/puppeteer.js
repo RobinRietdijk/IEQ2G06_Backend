@@ -27,7 +27,7 @@ function getContrastColor(bgColor) {
 }
 
 export async function generateImageOfElement(name, poem, color) {
-    const browser = await puppeteer.launch({headless: 'new', executablePath: "chromium-browser" });
+    const browser = await puppeteer.launch({headless: 'new', executablePath: "/usr/bin/chromium-browser", args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     await page.setContent(HTML);
     await page.addStyleTag({ content: style });
