@@ -28,7 +28,7 @@ COPY --from=builder /src/public/ ./public
 COPY --from=builder /src/socket-admin/ ./socket-admin
 
 # Install chromium
-RUN apt-get update && apt-get install -y chromium-browser
+RUN apt update && apt install -y chromium-browser
 
 # Install dependencies
 RUN npm install --only=production
