@@ -40,7 +40,7 @@ jobs:
       with:
         context: .
         file: ./Dockerfile
-        platforms: linux/amd64,linux/arm64,linux/arm
+        platforms: linux/arm
         push: true
         tags: ghcr.io/${{ env.REPO_LOWER }}:${{ env.COMMIT_HASH }},ghcr.io/${{ env.REPO_LOWER }}:latest
         build-args: | 
