@@ -55,3 +55,20 @@ export const PROMPT = (color, time, weather, location) => {
     Make the last sentence an incitement.
     `
 }
+
+export const PROMPT_no_weather = (color, time, location) => {
+    return `
+    Based on the given ranges:
+    Use Adjectives that describe the following colour: ${color}. 
+    Write a poem.
+    The poem has 6 lines. Every line has a maximum of 5 words.
+    Write in the style of a fortune reading.
+    Use less corporate jargon. Use a conversational tone. Use poetic, beautiful words.
+    Use the following information to write the poem:
+    - The colour: ${color}
+    - The time: ${time}
+    - The location: ${location}
+    Forbidden words: "${color}", "Admidst", "Hue".
+    Make the last sentence an incitement.
+    `
+}
