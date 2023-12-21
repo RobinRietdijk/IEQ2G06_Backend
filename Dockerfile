@@ -20,7 +20,7 @@ RUN npm run build
 FROM ubuntu:latest
 
 # Set up Node.js environment
-RUN apt-get update && \
+RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y curl software-properties-common && \
     curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && \
     apt-get install -y nodejs
@@ -33,11 +33,8 @@ COPY --from=builder /src/public/ ./public
 COPY --from=builder /src/socket-admin/ ./socket-admin
 
 # Install Chromium
-RUN if [ "$(uname -m)" = "x86_64" ]; then \
-        apt-get install -y chromium-browser; \
-    else \
-        apt-get install -y chromium; \
-    fi && \
+RUN apt-get update && \
+    apt-get install -y chromium && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
