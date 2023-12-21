@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import { GetColorName } from './color.js';
 import { HTML, style } from './puppeteer_html.js';
 
@@ -27,7 +27,7 @@ function getContrastColor(bgColor) {
 }
 
 export async function generateImageOfElement(name, poem, color) {
-    const browser = await puppeteer.launch({headless: 'new'});
+    const browser = await puppeteer.launch({headless: 'new', executablePath: "chromium-browser" });
     const page = await browser.newPage();
     await page.setContent(HTML);
     await page.addStyleTag({ content: style });
