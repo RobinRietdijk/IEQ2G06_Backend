@@ -133,6 +133,9 @@ export async function systemConclude(ioc, socket, data) {
         ioc.to(ROOMS.PRINTER).emit(EVENTS.PRINT, { system_id: system.getSystemId(), image: image });
 
         system.setState(STATES.PRINTING);
+        setTimeout(() => {
+            system.setState(STATES.IDLE);
+        }, 30 * 1000);
     } catch (error) {
         system.setState(STATES.ERROR)
         emitError(socket, InternalServerError(error));
