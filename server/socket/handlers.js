@@ -1,6 +1,6 @@
 import { emitError, trimSocket } from "./utils";
 import { socketioLogger as logger } from "../utils/logger";
-import { EVENTS, PROMPT, ROOMS, STATES, UPS, URL } from "../utils/constants";
+import { EVENTS, PROMPT, PROMPT_no_weather, ROOMS, STATES, UPS, URL } from "../utils/constants";
 import { InternalServerError, InvalidRequestError } from "../utils/error";
 import { generateImageOfElement } from "../utils/puppeteer";
 
@@ -92,7 +92,7 @@ export function nodeActivated(ioc, socket, data) {
 
 export async function systemConclude(ioc, socket, data) {
     const { data: system_data } = data;
-    if (!system_data || !system_data.color || !system_data.location || !system_data.weather_location) {
+    if (!system_data || !system_data.color) {
         emitError(socket, InvalidRequestError('Invalid request data'));
         return;
     }
@@ -115,22 +115,29 @@ export async function systemConclude(ioc, socket, data) {
         system.setState(STATES.PROMPTING);
 
         const color = system_data.color;
-        const location = system_data.location;
-        const time = new Date().toLocaleDateString('en-us', {
-            dateStyle: 'full',
-            timeStyle: 'short',
-        });
+        let location = system_data.location;
+        if (!location) location = "TU Delft Science Centre, Delft, Netherlands";
+        const time = new Date().toLocaleDateString(new Intl.DateTimeFormat("en-us", { dateStyle: "full", timeStyle: "short" }));
         const apiKey = process.env.WEATHERAPIKEY;
-        const weatherLocation = system_data.weather_location
-        const weatherRes = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${weatherLocation}&appid=${apiKey}`);
-        const weatherResJson = weatherRes.json()
-        const weather = `${weatherResJson.main.temp - 273.15}°C: ${weatherResJson.weather[0].description}`;
-        const prompt = PROMPT(color, time, weather, location);
+
+        let weather_location = system_data.weather_location
+        if (!system_data.weather_location) weather_location = "Delft,NL";
+        
+        let prompt = "";
+        try {
+            const weatherLocation = system_data.weather_location
+            const weatherRes = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${weatherLocation}&appid=${apiKey}`);
+            const weatherResJson = weatherRes.json()
+            const weather = `${weatherResJson.main.temp - 273.15}°C: ${weatherResJson.weather[0].description}`;
+            prompt = PROMPT(color, time, weather, location);
+        } catch (error) {
+            prompt = PROMPT_no_weather(color, time, location);
+        }
 
         const gptRes = await ioc.chatGPT.sendMessage(prompt);
         const parsedAnswer = gptRes.text.replace(/\n/g, '<br>');
         const image = await generateImageOfElement(system.getSystemId(), parsedAnswer, color);
-        ioc.to(ROOMS.PRINTER).emit(EVENTS.PRINT, { system_id: system.getSystemId(), image: image });
+        ioc.io.to(ROOMS.PRINTER).emit(EVENTS.PRINT, { system_id: system.getSystemId(), image: image });
 
         system.setState(STATES.PRINTING);
         setTimeout(() => {
