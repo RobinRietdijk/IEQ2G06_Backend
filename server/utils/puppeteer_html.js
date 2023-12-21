@@ -96,7 +96,7 @@ body {
 
 .card__wrapper {
 	aspect-ratio: 4 / 6;
-	width: 400px;
+	width: 1200px;
 }
 
 .card__container {
@@ -118,13 +118,13 @@ body {
 	aspect-ratio: 1 / 1;
 	width: 80%;
 	margin: auto;
-	padding: 20px;
+	padding: 60px;
 	text-align: center;
 	align-items: center;
 	overflow: hidden;
 	background-color: rgba(255, 255, 255, 0.9);
 	border-radius: 50%;
-	box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 24px 24px rgba(0, 0, 0, 0.2);
 }
 
 .poem__inner {
@@ -137,9 +137,9 @@ body {
 
 .poem__inner span {
 	max-height: 70%;
-	overflow: hidden;
+	overflow: visable;
 	font-family: 'Playfair Display', serif;
-	font-size: 1rem;
+	font-size: 3rem;
 	font-weight: 600;
 	line-height: 1.6;
 	text-align: center;
@@ -158,7 +158,7 @@ body {
 	width: 100%;
 	margin-left: auto;
 	margin-right: auto;
-	height: 120px;
+	height: 360px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -168,8 +168,8 @@ body {
 
 .title__logo {
 	flex: 1;
-	width: 60px;
-	margin-right: 55px;
+	width: 180px;
+	margin-right: 165px;
 	display: flex;
 	box-sizing: border-box;
 	align-self: flex-end;
@@ -179,17 +179,17 @@ body {
 	flex: 2;
 	display: flex;
 	justify-content: center;
-	margin: 0 auto 15px auto;
+	margin: 0 auto 45px auto;
 	text-transform: uppercase;
-	text-shadow: #333 1px 0 5px;
-	font-size: 64px;
+	text-shadow: #333 3px 0 5px;
+	font-size: 192px;
 	font-weight: 600;
-	letter-spacing: 10px;
-	line-height: 64px;
+	letter-spacing: 30px;
+	line-height: 192px;
 }
 
 .title__text span {
-	font-size: 70px;
+	font-size: 210px;
 	font-weight: bold;
 }
 
@@ -198,7 +198,7 @@ body {
 .color__container {
 	width: 100%;
 	height: 20%;
-	padding: 40px 10px 10px 10px;
+	padding: 120px 30px 30px 30px;
 	box-sizing: border-box;
 	text-align: center;
 }
@@ -207,7 +207,7 @@ body {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	font-size: 30px;
+	font-size: 90px;
 }
 
 .color__hex span {
@@ -216,7 +216,7 @@ body {
 	text-transform: uppercase;
 	text-overflow: ellipsis;
 	font-weight: bold;
-	font-size: 0.75rem;
+	font-size: 2.25rem;
 	opacity: 0.7;
 }
 `;

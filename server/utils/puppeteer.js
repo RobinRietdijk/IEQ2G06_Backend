@@ -29,7 +29,7 @@ function getContrastColor(bgColor) {
 export async function generateImageOfElement(name, poem, color) {
     const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
-    await page.setViewport({ width: 1920, height: 1080 });
+    await page.setViewport({ width: 3840, height: 2160 });
     await page.setContent(HTML);
     await page.addStyleTag({ content: style });
     await page.waitForNetworkIdle();
