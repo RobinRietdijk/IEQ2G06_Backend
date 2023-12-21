@@ -16,8 +16,8 @@ COPY . .
 # Build the application using Babel
 RUN npm run build
 
-# Runtime stage with Ubuntu base image
-FROM ubuntu:latest
+# Runtime stage with a specific Ubuntu base image
+FROM ubuntu:20.04
 
 # Set up Node.js environment
 RUN apt-get update && apt-get upgrade -y && \
@@ -31,16 +31,6 @@ COPY --from=builder /src/package*.json ./
 COPY --from=builder /src/dist/ ./dist
 COPY --from=builder /src/public/ ./public
 COPY --from=builder /src/socket-admin/ ./socket-admin
-
-# Install Chromium
-RUN apt-get update \
-    && apt-get install -y wget gnupg \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
-      --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
 RUN npm install --only=production
