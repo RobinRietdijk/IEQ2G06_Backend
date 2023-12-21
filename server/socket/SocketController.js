@@ -141,7 +141,7 @@ export default class SocketController {
                 }
                 activity = Math.min(Math.max(Object.keys(this.#systems).length / activity ? activity !== 0.00 : 0.00, 0.00), 1.00)
                 activity = activity.toFixed(2)
-                MQTTController.publish('Activity', activity.toString())
+                if (activity > 0) MQTTController.publish('Group 6/Activity', activity.toString())
             } catch (error) {
                 logger.error("Error in activity loop: " + error.message);
             }
