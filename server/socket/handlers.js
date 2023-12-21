@@ -139,12 +139,13 @@ export async function systemConclude(ioc, socket, data) {
         const image = await generateImageOfElement(system.getSystemId(), parsedAnswer, color);
         ioc.io.to(ROOMS.PRINTER).emit(EVENTS.PRINT, { system_id: system.getSystemId(), image: image });
 
-        system.setState(STATES.PRINTING);
+        setTimeout(() => {
+            system.setState(STATES.PRINTING);
+        }, 10 * 1000);
         setTimeout(() => {
             system.setState(STATES.IDLE);
-        }, 30 * 1000);
+        }, 40 * 1000);
     } catch (error) {
-        system.setState(STATES.ERROR)
         emitError(socket, InternalServerError(error));
         logger.error(error);
     }
