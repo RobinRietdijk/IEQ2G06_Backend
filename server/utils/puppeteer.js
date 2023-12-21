@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer-core';
+import puppeteer from 'puppeteer';
 import { GetColorName } from './color.js';
 import { HTML, style } from './puppeteer_html.js';
 
@@ -27,10 +27,12 @@ function getContrastColor(bgColor) {
 }
 
 export async function generateImageOfElement(name, poem, color) {
-    const browser = await puppeteer.launch({headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080 });
     await page.setContent(HTML);
     await page.addStyleTag({ content: style });
+    await page.waitForNetworkIdle();
 
     const textColor = getContrastColor(color);
     const colorName = GetColorName(color);
@@ -49,6 +51,9 @@ export async function generateImageOfElement(name, poem, color) {
         colorNameEl.innerHTML = colorName;
         colorHexEl.innerHTML = color;
     }, poem, color, textColor, colorName);
+
+    const delay = time => new Promise(resolve => setTimeout(resolve, time));
+    await delay(1000); // wait for 1 second
 
     const selector = '#capture';
     const elementHandle = await page.$(selector);

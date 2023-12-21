@@ -6,8 +6,6 @@ export const HTML = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poem</title>
-    <link rel="stylesheet" href="./public/stylesheets/style.css">
-    <link rel="stylesheet" href="./public/stylesheets/card.css">
 </head>
 
 <body>
@@ -79,22 +77,22 @@ export const HTML = `
 `;
 
 export const style = `
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+
 body {
-    height: 100vh;
-    width: 100vw;
-    margin: 0;
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	height: 100vh;
+	width: 100vw;
+	margin: 0;
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-
+  
 .card__positioner {
-    display: grid;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-content: center;
+	display: grid;
+	width: 100%;
+	height: 100%;
+	justify-content: center;
+	align-content: center;
 }
-
-.@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
 
 .card__wrapper {
 	aspect-ratio: 4 / 6;
@@ -105,7 +103,7 @@ body {
 	position: relative;
 	width: 100%;
 	height: 100%;
-	background-image: url('./public/assets/grunge_texture.jpg');
+	background-image: url('/assets/grunge_texture.jpg');
 	background-size: 200% 200%;
 	background-blend-mode: multiply;
 }
@@ -194,6 +192,8 @@ body {
 	font-size: 70px;
 	font-weight: bold;
 }
+
+
 
 .color__container {
 	width: 100%;
