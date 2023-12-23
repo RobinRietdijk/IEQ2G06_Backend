@@ -41,6 +41,7 @@
     "@babel/preset-env": "^7.23.5",
     "@socket.io/admin-ui": "^0.5.1",
     "0g": "^0.0.9",
+    "aedes": "^0.50.1",
     "chalk": "^4.1.2",
     "chatgpt": "^5.2.5",
     "cookie-parser": "~1.4.4",
@@ -52,12 +53,14 @@
     "http": "^0.0.1-security",
     "morgan": "~1.9.1",
     "mqtt": "^5.3.3",
+    "net": "^1.0.2",
     "nodemon": "^3.0.1",
     "npm-run-all": "^4.1.5",
     "puppeteer": "^21.6.1",
     "qrcode": "^1.5.3",
     "rimraf": "^5.0.5",
     "socket.io": "^4.7.2",
+    "websocket-stream": "^5.5.2",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1"
   }

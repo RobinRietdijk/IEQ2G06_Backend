@@ -9,6 +9,7 @@ import SocketController from '../socket/SocketController';
 import { appLogger as logger } from '../utils/logger';
 import fs from 'fs/promises';
 import MQTTController from '../mqtt/MQTTController';
+import MQTTBroker from '../mqtt/MQTTBroker';
 
 let server;
 const startServer = async () => {
@@ -27,14 +28,14 @@ const startServer = async () => {
     // Create HTTP server.
     server = http.createServer(app);
     
-    // Setup MQTT connection
-    const mqtt = new MQTTController();
-    mqtt.init()
+    // Setup MQTT broker
+    const mqtt = new MQTTBroker();
+    mqtt.initMQTTBroker(server)
 
     // Setup socket.io server.
-    const sc = new SocketController();
-    sc.initSocketController(server);
-    app.set('socket', sc.io);
+    // const sc = new SocketController();
+    // sc.initSocketController(server);
+    // app.set('socket', sc.io);
 
     
 
