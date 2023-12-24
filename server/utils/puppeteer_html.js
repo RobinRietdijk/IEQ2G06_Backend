@@ -122,7 +122,7 @@ body {
 	text-align: center;
 	align-items: center;
 	overflow: hidden;
-	background-color: rgba(255, 255, 255, 0.9);
+	background-color: rgba(255, 255, 255, 1);
 	border-radius: 50%;
 	box-shadow: 0 24px 24px rgba(0, 0, 0, 0.2);
 }
